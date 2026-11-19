@@ -75,13 +75,21 @@ export async function POST(req: NextRequest) {
     if (apiKey && apiKey.trim().length > 10) {
       try {
         const systemInstruction = `Anda adalah asisten AI profesional untuk peserta program MagangHub Kemnaker RI.
-Tugas Anda adalah memperluas deskripsi kegiatan harian singkat menjadi 3 bagian laporan resmi MagangHub Kemnaker.
-ATURAN WAJIB:
-1. Bahasa Indonesia baku, formal, profesional, dan mencerminkan etos kerja magang berkualitas.
-2. Panjang teks untuk SETIAP bagian (activity_log, lesson_learned, obstacles) WAJIB LEBIH DARI 100 KARAKTER (tidak boleh kurang dari 100 karakter).
-3. Jika no_obstacles bernilai true, bagian "obstacles" HARUS menyatakan bahwa kegiatan berjalan lancar, tidak ada kendala signifikan, koordinasi berjalan baik, dan SOP terpenuhi (panjang minimal 100 karakter).
-4. Jika no_obstacles bernilai false, gunakan kendala yang disebutkan dan jelaskan secara profesional beserta solusi penanganannya (minimal 100 karakter).
-5. Output HARUS murni JSON dengan format:
+Tugas Anda adalah menyusun draf laporan harian resmi MagangHub Kemnaker yang padat, lugas, dan profesional berdasarkan catatan kegiatan singkat pengguna.
+
+BATASAN PANJANG TEKS & JUMLAH KATA (SANGAT PENTING):
+- Total panjang keseluruhan isi laporan (akumulasi activity_log + lesson_learned + obstacles) WAJIB antara 200 hingga 300 kata. DILARANG KERAS membuat teks yang terlalu panjang (jangan lebih dari 300 kata, apalagi mencapai 400-600 kata).
+- Pembagian estimasi kata untuk masing-masing bagian:
+  * activity_log: sekitar 100 - 150 kata (fokus pada tahapan pengerjaan teknis, alur koordinasi, dan hasil kegiatan secara ringkas).
+  * lesson_learned: sekitar 50 - 80 kata (poin pembelajaran atau keahlian utama yang didapatkan hari ini).
+  * obstacles: sekitar 40 - 70 kata (uraian singkat kendala beserta solusinya, atau jika tidak ada kendala, konfirmasi bahwa kegiatan berjalan lancar dan sesuai SOP).
+- Setiap bagian (activity_log, lesson_learned, obstacles) TETAP WAJIB memiliki minimal lebih dari 100 karakter agar lolos validasi sistem Kemnaker.
+
+ATURAN LAIN:
+1. Bahasa Indonesia baku, formal, profesional, dan to-the-point (hindari pengulangan kalimat dan basa-basi berlebih).
+2. Jika no_obstacles bernilai true, bagian "obstacles" HARUS menyatakan bahwa kegiatan berlangsung lancar, koordinasi berjalan baik, dan SOP terpenuhi (40-70 kata, >= 100 karakter).
+3. Jika no_obstacles bernilai false, jelaskan kendala yang dialami secara objektif dan sebutkan langkah solutif yang diambil (40-70 kata, >= 100 karakter).
+4. Output HARUS murni format JSON:
 {
   "activity_log": "...",
   "lesson_learned": "...",
@@ -95,7 +103,7 @@ Deskripsi Kegiatan Singkat: "${prompt.trim()}"
 Tidak Ada Kendala?: ${no_obstacles ? 'YA (Tidak ada kendala)' : 'TIDAK'}
 Catatan Kendala Khusus: "${custom_obstacle ? custom_obstacle.trim() : '-'}"
 
-Hasilkan JSON laporan resmi Kemnaker dengan 3 atribut: activity_log, lesson_learned, obstacles (masing-masing wajib >= 100 karakter).`;
+INSTRUKSI KHUSUS: Hasilkan JSON laporan resmi Kemnaker dengan panjang total seluruh teks berkisar 200 - 300 kata saja (activity_log: 100-150 kata, lesson_learned: 50-80 kata, obstacles: 40-70 kata). Pastikan setiap bagian tetap memenuhi minimal 100 karakter.`;
 
         // Daftar model yang didukung, utamakan gemini-2.5-flash
         const modelsToTry = ['gemini-2.5-flash', 'gemini-flash-latest'];
@@ -118,7 +126,8 @@ Hasilkan JSON laporan resmi Kemnaker dengan 3 atribut: activity_log, lesson_lear
                 ],
                 generationConfig: {
                   responseMimeType: 'application/json',
-                  temperature: 0.7,
+                  temperature: 0.6,
+                  maxOutputTokens: 1500,
                 },
               }),
             });

@@ -140,10 +140,20 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
       setLessonLearned(json.data.lesson_learned || '');
       setObstacles(json.data.obstacles || '');
 
+      const totalWords = [
+        json.data.activity_log || '',
+        json.data.lesson_learned || '',
+        json.data.obstacles || '',
+      ]
+        .join(' ')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean).length;
+
       setAlertInfo({
         type: 'success',
         message:
-          'Laporan berhasil dibuat otomatis oleh AI! Semua kolom telah memenuhi standar minimal 100 karakter. Silakan tinjau dan centang persetujuan di bawah.',
+          `Laporan berhasil dibuat otomatis oleh AI (${totalWords} kata, padat & profesional)! Semua kolom telah memenuhi standar minimal 100 karakter. Silakan tinjau dan centang persetujuan di bawah.`,
       });
     } catch (err: any) {
       setAlertInfo({
@@ -247,7 +257,9 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     }
   };
 
-  const renderCharIndicator = (currentLength: number) => {
+  const renderCharIndicator = (text: string) => {
+    const currentLength = text.trim().length;
+    const wordCount = text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : 0;
     const isPassing = currentLength >= MIN_CHARS;
     const percent = Math.min(100, Math.round((currentLength / MIN_CHARS) * 100));
 
@@ -265,16 +277,18 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           <span className={`font-semibold ${isPassing ? 'text-zinc-950' : 'text-zinc-500'}`}>
             {isPassing ? (
               <span className="flex items-center gap-0.5">
-                <Check className="h-3 w-3" /> Memenuhi ({currentLength})
+                <Check className="h-3 w-3" /> Memenuhi ({currentLength} kar)
               </span>
             ) : (
-              `Butuh ${MIN_CHARS - currentLength} lagi`
+              `Butuh ${MIN_CHARS - currentLength} karakter lagi`
             )}
           </span>
         </div>
-        <span className="font-mono text-zinc-400">
-          {currentLength} / {MIN_CHARS}
-        </span>
+        <div className="flex items-center gap-2 font-mono text-zinc-400 text-[11px]">
+          <span className="text-zinc-600 font-medium">{wordCount} kata</span>
+          <span>•</span>
+          <span>{currentLength}/{MIN_CHARS} kar</span>
+        </div>
       </div>
     );
   };
@@ -360,6 +374,9 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                   <Sparkles className="h-4 w-4 text-zinc-900" />
                   <span>Generate Otomatis (AI)</span>
                 </div>
+                <span className="text-[11px] text-zinc-500 font-medium">
+                  Target: 200 – 300 kata
+                </span>
               </div>
 
               {/* Input Singkat Kegiatan */}
@@ -435,7 +452,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                 placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
-              {renderCharIndicator(activityLog.trim().length)}
+              {renderCharIndicator(activityLog)}
             </div>
 
             {/* 2. Pembelajaran */}
@@ -453,7 +470,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                 placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
-              {renderCharIndicator(lessonLearned.trim().length)}
+              {renderCharIndicator(lessonLearned)}
             </div>
 
             {/* 3. Kendala */}
@@ -471,7 +488,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                 placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
-              {renderCharIndicator(obstacles.trim().length)}
+              {renderCharIndicator(obstacles)}
             </div>
 
             {/* Lokasi Presensi (Monochrome) */}
@@ -595,7 +612,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               placeholder="Tulis alasan tidak hadir minimal 100 karakter"
               className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
             />
-            {renderCharIndicator(leaveReason.trim().length)}
+            {renderCharIndicator(leaveReason)}
           </div>
         )}
 
