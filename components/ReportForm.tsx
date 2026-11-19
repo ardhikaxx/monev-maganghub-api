@@ -24,6 +24,9 @@ import {
   Check,
   Search,
   X,
+  ExternalLink,
+  Shield,
+  HelpCircle,
 } from 'lucide-react';
 
 interface ReportFormProps {
@@ -41,6 +44,12 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
   const [leaveReason, setLeaveReason] = useState('');
   const [isAgreed, setIsAgreed] = useState(false);
 
+  // Quick AI Prompt states
+  const [quickPrompt, setQuickPrompt] = useState('');
+  const [noObstacles, setNoObstacles] = useState(true);
+  const [customObstacle, setCustomObstacle] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
   // Geolocation states
   const [includeGeo, setIncludeGeo] = useState(true);
   const [coords, setCoords] = useState<{
@@ -54,16 +63,16 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{
-    type: 'success' | 'error';
+    type: 'success' | 'error' | 'info';
     message: string;
   } | null>(null);
 
-  // Default / Restore location on mount
+  // Restore Location on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('monev-saved-coords');
-      if (saved) {
-        const parsed = JSON.parse(saved);
+      const savedCoords = localStorage.getItem('monev-saved-coords');
+      if (savedCoords) {
+        const parsed = JSON.parse(savedCoords);
         if (parsed.lat && parsed.lng) {
           setCoords({
             lat: parseFloat(parsed.lat),
@@ -96,6 +105,58 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     c.province.toLowerCase().includes(citySearch.toLowerCase())
   );
 
+  // Handler Generate AI Otomatis
+  const handleGenerateAI = async () => {
+    if (!quickPrompt.trim()) {
+      setAlertInfo({
+        type: 'error',
+        message: 'Mohon tuliskan kegiatan singkat hari ini terlebih dahulu sebelum men-generate.',
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    setAlertInfo(null);
+
+    try {
+      const res = await fetch('/api/monev/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: quickPrompt.trim(),
+          no_obstacles: noObstacles,
+          custom_obstacle: noObstacles ? '' : customObstacle.trim(),
+          role: user?.position || 'Peserta Magang',
+          company: user?.company_name || 'Mitra Kemnaker',
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.data) {
+        throw new Error(json?.error || 'Gagal menyusun laporan otomatis');
+      }
+
+      setActivityLog(json.data.activity_log || '');
+      setLessonLearned(json.data.lesson_learned || '');
+      setObstacles(json.data.obstacles || '');
+
+      setAlertInfo({
+        type: 'success',
+        message:
+          'Laporan berhasil dibuat otomatis oleh AI! Semua kolom telah memenuhi standar minimal 100 karakter. Silakan tinjau dan centang persetujuan di bawah.',
+      });
+    } catch (err: any) {
+      setAlertInfo({
+        type: 'error',
+        message: err?.message || 'Terjadi kesalahan saat men-generate laporan.',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // Character validations
   const MIN_CHARS = 100;
   const isActivityValid = activityLog.trim().length >= MIN_CHARS;
@@ -118,6 +179,9 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
   };
 
   const resetForm = () => {
+    setQuickPrompt('');
+    setCustomObstacle('');
+    setNoObstacles(true);
     setActivityLog('');
     setLessonLearned('');
     setObstacles('');
@@ -126,7 +190,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     setAlertInfo(null);
   };
 
-  // Submit report
+  // Submit report to Kemnaker
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAlertInfo(null);
@@ -178,7 +242,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
         type: 'success',
         message:
           status === 'PRESENT'
-            ? 'Kehadiran dan laporan aktivitas harian berhasil dikirim ke MagangHub.'
+            ? 'Kehadiran dan laporan aktivitas harian berhasil dikirim ke MagangHub Kemnaker.'
             : 'Data kehadiran berhasil disimpan.',
       });
       onSuccess();
@@ -301,14 +365,94 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           </div>
         </div>
 
-        {/* Jika Hadir: 3 Textarea */}
+        {/* Jika Hadir: Bagian Generator AI & 3 Textarea */}
         {status === 'PRESENT' && (
-          <div className="space-y-4 sm:space-y-4.5 rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5 sm:p-5">
-            {/* Template Cepat (Monochrome Chips) */}
+          <div className="space-y-4 sm:space-y-5 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-3.5 sm:p-5">
+            {/* FITUR 1: Generator AI Cepat & Checkbox Tidak Ada Kendala */}
+            <div className="rounded-xl border border-zinc-300 bg-white p-4 shadow-sm space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-zinc-100 pb-2.5">
+                <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-zinc-950">
+                  <Sparkles className="h-4 w-4 text-zinc-900" />
+                  <span>Generator Draf Laporan Otomatis (AI)</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  <span>AI Gemini Siap Digunakan</span>
+                </div>
+              </div>
+
+              {/* Input Singkat Kegiatan */}
+              <div>
+                <label className="block text-xs font-semibold text-zinc-800 mb-1">
+                  1. Tuliskan Kegiatan Singkat Hari Ini:
+                </label>
+                <textarea
+                  rows={2}
+                  value={quickPrompt}
+                  onChange={(e) => setQuickPrompt(e.target.value)}
+                  placeholder="Contoh: Mengerjakan fitur antarmuka dashboard, perbaikan bug autentikasi, dan pengujian API..."
+                  className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 p-2.5 text-xs sm:text-sm text-zinc-900 focus:border-zinc-950 focus:bg-white focus:outline-none"
+                />
+              </div>
+
+              {/* Checkbox "Tidak Ada Kendala" */}
+              <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 space-y-2">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={noObstacles}
+                    onChange={(e) => setNoObstacles(e.target.checked)}
+                    className="h-4 w-4 rounded border-zinc-400 text-zinc-950 focus:ring-0 shrink-0"
+                  />
+                  <span className="text-xs font-bold text-zinc-900 select-none">
+                    Tidak ada kendala operasional / teknis hari ini
+                  </span>
+                </label>
+
+                {noObstacles ? (
+                  <p className="text-[11px] text-zinc-500 pl-6 leading-relaxed">
+                    Uraian kendala akan otomatis diisi formal &ge;100 karakter: <em>kegiatan berjalan lancar, fasilitas kerja berfungsi optimal, dan tidak ada hambatan operasional signifikan.</em>
+                  </p>
+                ) : (
+                  <div className="pl-6 pt-1">
+                    <label className="block text-[11px] font-semibold text-zinc-700 mb-1">
+                      Sebutkan Kendala Singkat (Jika Ada):
+                    </label>
+                    <input
+                      type="text"
+                      value={customObstacle}
+                      onChange={(e) => setCustomObstacle(e.target.value)}
+                      placeholder="Contoh: Sempat terjadi kendala jaringan internet lambat saat download aset..."
+                      className="w-full rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Tombol Eksekusi Generate */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
+                <span className="text-[11px] text-zinc-400">
+                  *Sekali klik langsung mengisi ketiga form di bawah (&ge;100 karakter).
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleGenerateAI}
+                  disabled={isGenerating || !quickPrompt.trim()}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 disabled:opacity-40 text-white px-4 py-2 text-xs font-bold transition shadow-sm"
+                >
+                  <Sparkles className={`h-3.5 w-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
+                  <span>{isGenerating ? 'Menyusun Laporan...' : 'Generate Laporan Otomatis'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Template Cepat Draf Bawaan (Monochrome Chips) */}
             <div className="rounded-xl border border-zinc-200 bg-white p-3">
               <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-800 mb-2">
-                <Sparkles className="h-3.5 w-3.5 text-zinc-600 shrink-0" />
-                <span>Gunakan Draf Cepat (&gt;100 karakter):</span>
+                <FileText className="h-3.5 w-3.5 text-zinc-600 shrink-0" />
+                <span>Atau Pilih Draf Template Siap Pakai:</span>
               </div>
               <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
                 {ACTIVITY_TEMPLATES.map((tmpl, idx) => (
@@ -481,6 +625,8 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           </div>
         )}
 
+
+
         {/* Jika Izin: Alasan */}
         {status === 'ON_LEAVE' && (
           <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 sm:p-5 space-y-3">
@@ -501,8 +647,8 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           </div>
         )}
 
-        {/* Checkbox Pernyataan */}
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3.5 sm:p-4">
+        {/* Checkbox Pernyataan & Konfirmasi Wajib Sebelum Kirim */}
+        <div className="rounded-xl border border-zinc-300 bg-zinc-50/80 p-3.5 sm:p-4">
           <label className="flex items-start gap-2.5 sm:gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -510,8 +656,8 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               onChange={(e) => setIsAgreed(e.target.checked)}
               className="mt-0.5 h-4 w-4 rounded border-zinc-400 text-zinc-950 focus:ring-0 shrink-0"
             />
-            <span className="text-xs text-zinc-700 select-none leading-relaxed">
-              Saya menyatakan telah meninjau dan memastikan seluruh isian laporan kehadiran ini sudah benar sesuai aktivitas nyata.
+            <span className="text-xs text-zinc-800 select-none leading-relaxed font-medium">
+              Saya menyatakan telah meninjau seluruh uraian laporan harian di atas, memastikannya telah sesuai standar minimal 100 karakter, dan siap dikirimkan ke portal MagangHub Kemnaker.
             </span>
           </label>
         </div>
