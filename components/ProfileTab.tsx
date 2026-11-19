@@ -21,7 +21,10 @@ import {
   ExternalLink,
   GraduationCap,
   ArrowRight,
-  TrendingUp,
+  Edit3,
+  X,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 
 interface ProfileTabProps {
@@ -29,6 +32,16 @@ interface ProfileTabProps {
   token?: string | null;
   onSelectTab?: (tab: 'form' | 'history' | 'profile' | 'token') => void;
   onRefreshUser?: () => void;
+}
+
+interface CustomInternshipInfo {
+  company?: string;
+  position?: string;
+  location?: string;
+  startDate?: string;
+  endDate?: string;
+  batch?: string;
+  mentor?: string;
 }
 
 export default function ProfileTab({
@@ -41,6 +54,28 @@ export default function ProfileTab({
   const [attendances, setAttendances] = useState<Attendance[]>([]);
   const [loadingReports, setLoadingReports] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Modal Sesuaikan Informasi Magang
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [customInfo, setCustomInfo] = useState<CustomInternshipInfo>({});
+  const [editCompany, setEditCompany] = useState('');
+  const [editPosition, setEditPosition] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editStartDate, setEditStartDate] = useState('');
+  const [editEndDate, setEditEndDate] = useState('');
+  const [editBatch, setEditBatch] = useState('');
+  const [editMentor, setEditMentor] = useState('');
+
+  // Restore custom internship info from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('monev-custom-internship-info');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setCustomInfo(parsed);
+      }
+    } catch {}
+  }, []);
 
   // Ambil data laporan lengkap untuk profil
   const fetchReportData = async () => {
@@ -59,13 +94,12 @@ export default function ProfileTab({
         ? json.data
         : [];
 
-      // Urutkan tanggal terbaru paling atas
       list.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       setAttendances(list);
     } catch {
-      // Abaikan jika offline/gagal
+      // Offline fallback
     } finally {
       setLoadingReports(false);
     }
@@ -92,6 +126,79 @@ export default function ProfileTab({
     );
   }
 
+  // Tentukan data gabungan (Custom override || Server API Kemnaker)
+  const displayCompany =
+    customInfo.company ||
+    user.internship_company ||
+    user.company ||
+    user.company_name ||
+    '';
+
+  const displayPosition =
+    customInfo.position ||
+    user.job_role ||
+    user.position ||
+    '';
+
+  const displayLocation =
+    customInfo.location ||
+    user.internship_location_regency_name ||
+    user.location ||
+    '';
+
+  const displayStartDate =
+    customInfo.startDate ||
+    user.internship_start_date ||
+    '';
+
+  const displayEndDate =
+    customInfo.endDate ||
+    user.internship_end_date ||
+    '';
+
+  const displayBatch =
+    customInfo.batch ||
+    user.internship_batch_name ||
+    user.batch_name ||
+    '';
+
+  const displayMentor =
+    customInfo.mentor ||
+    user.mentor_name ||
+    '';
+
+  const openEditModal = () => {
+    setEditCompany(displayCompany);
+    setEditPosition(displayPosition);
+    setEditLocation(displayLocation);
+    setEditStartDate(displayStartDate ? displayStartDate.slice(0, 10) : '');
+    setEditEndDate(displayEndDate ? displayEndDate.slice(0, 10) : '');
+    setEditBatch(displayBatch);
+    setEditMentor(displayMentor);
+    setShowEditModal(true);
+  };
+
+  const handleSaveCustomInfo = () => {
+    const updated: CustomInternshipInfo = {
+      company: editCompany.trim(),
+      position: editPosition.trim(),
+      location: editLocation.trim(),
+      startDate: editStartDate.trim(),
+      endDate: editEndDate.trim(),
+      batch: editBatch.trim(),
+      mentor: editMentor.trim(),
+    };
+    setCustomInfo(updated);
+    localStorage.setItem('monev-custom-internship-info', JSON.stringify(updated));
+    setShowEditModal(false);
+  };
+
+  const handleResetCustomInfo = () => {
+    setCustomInfo({});
+    localStorage.removeItem('monev-custom-internship-info');
+    setShowEditModal(false);
+  };
+
   const copyId = () => {
     if (user.id) {
       navigator.clipboard.writeText(String(user.id));
@@ -106,9 +213,9 @@ export default function ProfileTab({
   let daysPassed = 0;
   let daysRemaining = 0;
 
-  if (user.internship_start_date && user.internship_end_date) {
-    const start = new Date(user.internship_start_date).getTime();
-    const end = new Date(user.internship_end_date).getTime();
+  if (displayStartDate && displayEndDate) {
+    const start = new Date(displayStartDate).getTime();
+    const end = new Date(displayEndDate).getTime();
     const now = new Date().getTime();
 
     daysTotal = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
@@ -159,16 +266,27 @@ export default function ProfileTab({
                 </h1>
                 <span className="hidden sm:inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] font-semibold text-zinc-300 border border-zinc-700">
                   <ShieldCheck className="h-3 w-3 text-zinc-200" />
-                  Terverifikasi
+                  Terverifikasi Kemnaker
                 </span>
               </div>
               <p className="text-xs text-zinc-400 mt-0.5">
-                {user.position || 'Peserta Program Magang'} &bull; {user.company_name || 'Mitra Kemnaker'}
+                {displayPosition || 'Peserta Program Magang'} &bull; {displayCompany || 'Mitra Kemnaker'}
+                {displayLocation && ` &bull; ${displayLocation}`}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto pt-2 sm:pt-0">
+            <button
+              type="button"
+              onClick={openEditModal}
+              className="flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition"
+              title="Sesuaikan Informasi Magang"
+            >
+              <Edit3 className="h-3.5 w-3.5" />
+              <span>Sesuaikan Data</span>
+            </button>
+
             <button
               type="button"
               onClick={handleRefreshAll}
@@ -193,7 +311,7 @@ export default function ProfileTab({
         </div>
 
         {/* Progress Periode Magang */}
-        {user.internship_start_date && user.internship_end_date && (
+        {displayStartDate && displayEndDate && (
           <div className="border-t border-zinc-100 bg-zinc-50/70 px-4 py-3 sm:px-8 sm:py-3.5">
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs mb-2">
               <div className="flex items-center gap-2 font-bold text-zinc-900">
@@ -217,7 +335,107 @@ export default function ProfileTab({
         )}
       </div>
 
-      {/* 2. Rangkuman KPI & Statistik Laporan Lengkap (Monochrome) */}
+      {/* 2. Kartu Resmi: Informasi Magang (Perusahaan, Posisi, Lokasi Posisi, Periode Magang) */}
+      <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+          <div className="flex items-center gap-2">
+            <Briefcase className="h-5 w-5 text-zinc-950 shrink-0" />
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-zinc-950">
+                Informasi Magang
+              </h2>
+              <p className="text-xs text-zinc-500">
+                Data resmi penempatan peserta program MagangHub Kemnaker
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-xs font-bold text-zinc-900 border border-zinc-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
+              Aktif
+            </span>
+
+            <button
+              type="button"
+              onClick={openEditModal}
+              className="text-xs font-semibold text-zinc-700 hover:text-zinc-950 border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 px-2.5 py-1 rounded-lg transition"
+            >
+              Ubah / Lengkapi
+            </button>
+          </div>
+        </div>
+
+        {/* Grid 4 Elemen Pokok Resmi */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-1">
+          {/* 1. Perusahaan */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+              Perusahaan
+            </span>
+            <p className="text-sm font-bold text-zinc-950 leading-snug">
+              {displayCompany || '-'}
+            </p>
+            <p className="text-[11px] text-zinc-500 mt-1">Mitra Penyelenggara</p>
+          </div>
+
+          {/* 2. Posisi */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+              Posisi
+            </span>
+            <p className="text-sm font-bold text-zinc-950 leading-snug">
+              {displayPosition || '-'}
+            </p>
+            <p className="text-[11px] text-zinc-500 mt-1">Job Role / Divisi</p>
+          </div>
+
+          {/* 3. Lokasi Posisi */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+              Lokasi Posisi
+            </span>
+            <p className="text-sm font-bold text-zinc-950 leading-snug">
+              {displayLocation || '-'}
+            </p>
+            <p className="text-[11px] text-zinc-500 mt-1">Wilayah Kerja / Penempatan</p>
+          </div>
+
+          {/* 4. Periode Magang */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
+              Periode Magang
+            </span>
+            <p className="text-sm font-bold text-zinc-950 leading-snug">
+              {displayStartDate && displayEndDate
+                ? `${formatDateIndo(displayStartDate)} s/d ${formatDateIndo(displayEndDate)}`
+                : displayStartDate
+                ? formatDateIndo(displayStartDate)
+                : '-'}
+            </p>
+            <p className="text-[11px] text-zinc-500 mt-1">
+              {displayBatch ? `Batch ${displayBatch}` : 'Durasi Pelaksanaan'}
+            </p>
+          </div>
+        </div>
+
+        {/* Rincian Tambahan: Mentor & Asal Institusi */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-zinc-100 text-xs">
+          <div className="flex items-center gap-2">
+            <UserCheck className="h-4 w-4 text-zinc-700 shrink-0" />
+            <span className="text-zinc-500">Mentor Pembimbing:</span>
+            <strong className="text-zinc-900">{displayMentor || '-'}</strong>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4 text-zinc-700 shrink-0" />
+            <span className="text-zinc-500">Asal Institusi / Kampus:</span>
+            <strong className="text-zinc-900">{user.institution_name || user.university || '-'}</strong>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Rangkuman KPI & Statistik Laporan Lengkap (Monochrome) */}
       <div>
         <div className="flex items-center justify-between mb-2.5">
           <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-500">
@@ -288,112 +506,6 @@ export default function ProfileTab({
             <p className="text-[11px] text-zinc-500 mt-0.5">
               Tingkat kehadiran: <strong>{attendanceRate}%</strong>
             </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Grid Rincian Data Peserta & Magang */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-        {/* Kolom 1: Perusahaan & Pembimbing */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm space-y-3.5">
-          <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
-            <Building2 className="h-4.5 w-4.5 text-zinc-950 shrink-0" />
-            <h3 className="text-sm sm:text-base font-bold text-zinc-950">
-              Penempatan & Mentor Magang
-            </h3>
-          </div>
-
-          <div className="space-y-3 text-xs">
-            <div>
-              <span className="text-zinc-400 font-medium block">Perusahaan Mitra Penyelenggara:</span>
-              <p className="text-zinc-950 font-bold text-sm mt-0.5">
-                {user.company_name || 'Mitra Penyelenggara Magang'}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">Divisi / Posisi Pekerjaan:</span>
-              <p className="text-zinc-800 font-semibold mt-0.5">
-                {user.position || 'Peserta Program Magang Kemnaker'}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">Mentor / Pembimbing Lapangan:</span>
-              <div className="flex items-center gap-1.5 text-zinc-950 font-semibold mt-0.5">
-                <UserCheck className="h-3.5 w-3.5 text-zinc-700" />
-                <span>{user.mentor_name || 'Pembimbing Lapangan'}</span>
-              </div>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">Periode Pelaksanaan:</span>
-              <p className="text-zinc-800 font-semibold mt-0.5">
-                {user.internship_start_date ? formatDateIndo(user.internship_start_date) : '-'} s/d{' '}
-                {user.internship_end_date ? formatDateIndo(user.internship_end_date) : 'Selesai'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Kolom 2: Identitas Peserta & SIAPkerja */}
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm space-y-3.5">
-          <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
-            <GraduationCap className="h-4.5 w-4.5 text-zinc-950 shrink-0" />
-            <h3 className="text-sm sm:text-base font-bold text-zinc-950">
-              Identitas & Akun SIAPkerja
-            </h3>
-          </div>
-
-          <div className="space-y-3 text-xs">
-            <div>
-              <span className="text-zinc-400 font-medium block">Nama Lengkap Peserta:</span>
-              <p className="text-zinc-950 font-bold text-sm mt-0.5">
-                {user.name || '-'}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">Asal Institusi / Universitas:</span>
-              <p className="text-zinc-800 font-semibold mt-0.5">
-                {user.institution_name || user.university || 'Peserta Terdaftar MagangHub'}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">Email Terdaftar:</span>
-              <p className="text-zinc-800 font-mono font-medium mt-0.5">
-                {user.email || '-'}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-zinc-400 font-medium block">ID Peserta Sistem:</span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <code className="rounded bg-zinc-100 px-2 py-0.5 font-mono text-zinc-900 border border-zinc-200 font-bold">
-                  {user.id ? String(user.id) : '-'}
-                </code>
-                {user.id && (
-                  <button
-                    type="button"
-                    onClick={copyId}
-                    className="flex items-center gap-1 rounded bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-700 hover:bg-zinc-200 transition border border-zinc-200"
-                  >
-                    {copiedId ? (
-                      <>
-                        <Check className="h-3 w-3 text-zinc-950" />
-                        <span className="text-zinc-950">Tersalin</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3 w-3" />
-                        <span>Salin</span>
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -538,6 +650,163 @@ export default function ProfileTab({
           </div>
         )}
       </div>
+
+      {/* Modal Sesuaikan Informasi Magang */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-sm p-3 sm:p-4">
+          <div className="w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-xl border border-zinc-200">
+            <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-5 py-4 shrink-0">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-4.5 w-4.5 text-zinc-900" />
+                <h3 className="font-bold text-sm sm:text-base text-zinc-900">
+                  Sesuaikan Informasi Magang
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-zinc-400 hover:text-zinc-700 p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-zinc-600">
+                <p className="font-bold text-zinc-900 mb-0.5">Penyesuaian Data Mandiri</p>
+                <p className="leading-relaxed text-[11px]">
+                  Data ini disimpan lokal di browser laptop Anda untuk melengkapi informasi magang resmi (Perusahaan, Posisi, Lokasi, dan Periode).
+                </p>
+              </div>
+
+              {/* 1. Perusahaan */}
+              <div>
+                <label className="block font-bold text-zinc-800 mb-1">
+                  1. Nama Perusahaan Mitra:
+                </label>
+                <input
+                  type="text"
+                  value={editCompany}
+                  onChange={(e) => setEditCompany(e.target.value)}
+                  placeholder="Contoh: PT Bank Rakyat Indonesia (Persero) Tbk"
+                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                />
+              </div>
+
+              {/* 2. Posisi */}
+              <div>
+                <label className="block font-bold text-zinc-800 mb-1">
+                  2. Posisi / Job Role Magang:
+                </label>
+                <input
+                  type="text"
+                  value={editPosition}
+                  onChange={(e) => setEditPosition(e.target.value)}
+                  placeholder="Contoh: Software Engineer Intern / UI UX Designer"
+                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                />
+              </div>
+
+              {/* 3. Lokasi Posisi */}
+              <div>
+                <label className="block font-bold text-zinc-800 mb-1">
+                  3. Lokasi Posisi / Penempatan:
+                </label>
+                <input
+                  type="text"
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  placeholder="Contoh: Kabupaten Bondowoso / Kota Surabaya"
+                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                />
+              </div>
+
+              {/* 4. Periode Magang (Mulai & Selesai) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-zinc-800 mb-1">
+                    Tanggal Mulai Magang:
+                  </label>
+                  <input
+                    type="date"
+                    value={editStartDate}
+                    onChange={(e) => setEditStartDate(e.target.value)}
+                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-zinc-800 mb-1">
+                    Tanggal Selesai Magang:
+                  </label>
+                  <input
+                    type="date"
+                    value={editEndDate}
+                    onChange={(e) => setEditEndDate(e.target.value)}
+                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* 5. Batch & Mentor */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-zinc-800 mb-1">
+                    Batch Magang:
+                  </label>
+                  <input
+                    type="text"
+                    value={editBatch}
+                    onChange={(e) => setEditBatch(e.target.value)}
+                    placeholder="Contoh: 1 / 2"
+                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-zinc-800 mb-1">
+                    Nama Mentor Pembimbing:
+                  </label>
+                  <input
+                    type="text"
+                    value={editMentor}
+                    onChange={(e) => setEditMentor(e.target.value)}
+                    placeholder="Nama Mentor Lapangan"
+                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between border-t border-zinc-100 bg-zinc-50 px-5 py-3 shrink-0">
+              <button
+                type="button"
+                onClick={handleResetCustomInfo}
+                className="text-xs text-zinc-500 hover:text-zinc-800 font-semibold underline"
+              >
+                Reset ke Data Asli Server
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100"
+                >
+                  Batal
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSaveCustomInfo}
+                  className="rounded-lg bg-zinc-950 px-4 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 transition"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
