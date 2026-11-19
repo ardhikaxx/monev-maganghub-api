@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   AttendanceStatus,
   AttendanceSubmissionPayload,
@@ -34,6 +34,7 @@ interface ReportFormProps {
 }
 
 export default function ReportForm({ token, user, onSuccess }: ReportFormProps) {
+  const formContainerRef = useRef<HTMLDivElement>(null);
   const [date, setDate] = useState<string>(getTodayDateString());
   const [status, setStatus] = useState<AttendanceStatus>('PRESENT');
   const [activityLog, setActivityLog] = useState('');
@@ -239,19 +240,40 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
         );
       }
 
+      // Kosongkan seluruh isian formulir setelah berhasil kirim
+      setActivityLog('');
+      setLessonLearned('');
+      setObstacles('');
+      setQuickPrompt('');
+      setCustomObstacle('');
+      setNoObstacles(true);
+      setLeaveReason('');
+      setIsAgreed(false);
+
       setAlertInfo({
         type: 'success',
         message:
           status === 'PRESENT'
-            ? 'Kehadiran dan laporan aktivitas harian berhasil dikirim ke MagangHub Kemnaker.'
-            : 'Data kehadiran berhasil disimpan.',
+            ? 'Laporan aktivitas dan kehadiran berhasil dikirim ke MagangHub Kemnaker!'
+            : 'Data kehadiran berhasil disimpan ke MagangHub Kemnaker.',
       });
+
+      // Scroll ke atas agar notifikasi terlihat jelas di HP maupun Desktop
+      if (formContainerRef.current) {
+        formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
       onSuccess();
     } catch (err: any) {
       setAlertInfo({
         type: 'error',
         message: err?.message || 'Terjadi kesalahan saat mengirim laporan.',
       });
+      if (formContainerRef.current) {
+        formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -277,24 +299,24 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           <span className={`font-semibold ${isPassing ? 'text-zinc-950' : 'text-zinc-500'}`}>
             {isPassing ? (
               <span className="flex items-center gap-0.5">
-                <Check className="h-3 w-3" /> Memenuhi ({currentLength} kar)
+                <Check className="h-3 w-3" /> Memenuhi syarat
               </span>
             ) : (
-              `Butuh ${MIN_CHARS - currentLength} karakter lagi`
+              `Kurang ${MIN_CHARS - currentLength} karakter lagi`
             )}
           </span>
         </div>
-        <div className="flex items-center gap-2 font-mono text-zinc-400 text-[11px]">
-          <span className="text-zinc-600 font-medium">{wordCount} kata</span>
+        <div className="flex items-center gap-1.5 font-mono text-zinc-500 text-[11px]">
+          <span className="font-semibold text-zinc-800">{wordCount} kata</span>
           <span>•</span>
-          <span>{currentLength}/{MIN_CHARS} kar</span>
+          <span>{currentLength} karakter (min. {MIN_CHARS})</span>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 md:p-8 shadow-sm">
+    <div ref={formContainerRef} className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 md:p-8 shadow-sm">
       {/* Form Header (Monochrome) */}
       <div className="mb-5 sm:mb-6 flex flex-col gap-2.5 border-b border-zinc-100 pb-4 sm:pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -313,23 +335,33 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
 
       {alertInfo && (
         <div
-          className={`mb-5 sm:mb-6 flex items-start gap-2.5 rounded-xl border p-3.5 text-xs sm:text-sm ${
+          className={`mb-5 sm:mb-6 flex items-start justify-between gap-2.5 rounded-xl border p-3.5 sm:p-4 text-xs sm:text-sm ${
             alertInfo.type === 'success'
               ? 'border-zinc-300 bg-zinc-100 text-zinc-950'
               : 'border-zinc-400 bg-zinc-100 text-zinc-950'
           }`}
         >
-          {alertInfo.type === 'success' ? (
-            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-zinc-950" />
-          ) : (
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700" />
-          )}
-          <div className="flex-1">
-            <p className="font-bold">
-              {alertInfo.type === 'success' ? 'Sukses' : 'Pemberitahuan'}
-            </p>
-            <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">{alertInfo.message}</p>
+          <div className="flex items-start gap-2.5 flex-1">
+            {alertInfo.type === 'success' ? (
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-zinc-950" />
+            ) : (
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700" />
+            )}
+            <div>
+              <p className="font-bold">
+                {alertInfo.type === 'success' ? 'Laporan Terkirim' : 'Pemberitahuan'}
+              </p>
+              <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">{alertInfo.message}</p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setAlertInfo(null)}
+            className="text-zinc-400 hover:text-zinc-700 p-0.5 shrink-0"
+            title="Tutup pesan"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 
@@ -375,7 +407,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                   <span>Generate Otomatis (AI)</span>
                 </div>
                 <span className="text-[11px] text-zinc-500 font-medium">
-                  Target: 200 – 300 kata
+                  Format: Padat & Ringkas (min. 100 kar)
                 </span>
               </div>
 
@@ -630,6 +662,33 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
             </span>
           </label>
         </div>
+
+        {/* Notifikasi Hasil Kirim di Bawah (Langsung terlihat di HP tanpa perlu scroll) */}
+        {alertInfo && (
+          <div
+            className={`flex items-center justify-between gap-2.5 rounded-xl border p-3.5 text-xs sm:text-sm ${
+              alertInfo.type === 'success'
+                ? 'border-zinc-300 bg-zinc-100 text-zinc-950'
+                : 'border-zinc-400 bg-zinc-100 text-zinc-950'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {alertInfo.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-zinc-950" />
+              ) : (
+                <AlertCircle className="h-4 w-4 shrink-0 text-zinc-700" />
+              )}
+              <span className="font-semibold">{alertInfo.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAlertInfo(null)}
+              className="text-zinc-400 hover:text-zinc-700 p-0.5 shrink-0"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
 
         {/* Tombol Submit & Reset */}
         <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-1 sm:pt-2">
