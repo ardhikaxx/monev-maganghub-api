@@ -193,7 +193,7 @@ export default function Home() {
                 </h1>
                 <p className="text-xs text-zinc-500 flex items-center gap-1.5 mt-0.5">
                   <Building2 className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                  <span>{user?.company_name || 'Mitra Kemnaker'}</span>
+                  <span>{user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker'}</span>
                   {user?.internship_start_date && (
                     <>
                       <span>&bull;</span>
