@@ -53,7 +53,7 @@ export default function Navbar({
                 <span className="truncate max-w-[160px] md:max-w-[220px]">{user.name || 'Peserta'}</span>
               </div>
               <p className="text-[11px] text-zinc-500 truncate max-w-[160px] md:max-w-[220px]">
-                {user.company_name || 'Mitra Kemnaker'}
+                {user.internship_company || user.company || user.company_name || 'Mitra Kemnaker'}
               </p>
             </button>
 
