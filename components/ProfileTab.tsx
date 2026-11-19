@@ -264,13 +264,9 @@ export default function ProfileTab({
                 <h1 className="text-base sm:text-xl font-bold tracking-tight text-white">
                   {user.name || 'Peserta Magang'}
                 </h1>
-                <span className="hidden sm:inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-[11px] font-semibold text-zinc-300 border border-zinc-700">
-                  <ShieldCheck className="h-3 w-3 text-zinc-200" />
-                  Terverifikasi Kemnaker
-                </span>
               </div>
               <p className="text-xs text-zinc-400 mt-0.5">
-                {displayPosition || 'Peserta Program Magang'} &bull; {displayCompany || 'Mitra Kemnaker'}
+                {displayPosition || 'Peserta Magang'} &bull; {displayCompany || 'Mitra Kemnaker'}
                 {displayLocation && ` &bull; ${displayLocation}`}
               </p>
             </div>
@@ -281,10 +277,10 @@ export default function ProfileTab({
               type="button"
               onClick={openEditModal}
               className="flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition"
-              title="Sesuaikan Informasi Magang"
+              title="Sesuaikan Data Magang"
             >
               <Edit3 className="h-3.5 w-3.5" />
-              <span>Sesuaikan Data</span>
+              <span>Sesuaikan</span>
             </button>
 
             <button
@@ -292,7 +288,7 @@ export default function ProfileTab({
               onClick={handleRefreshAll}
               disabled={isRefreshing}
               className="flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition disabled:opacity-50"
-              title="Segarkan Profil & Laporan"
+              title="Segarkan Data"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span>Segarkan</span>
@@ -304,7 +300,7 @@ export default function ProfileTab({
               rel="noreferrer"
               className="flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-zinc-950 hover:bg-zinc-100 transition"
             >
-              <span>Dashboard Asli</span>
+              <span>Portal Asli</span>
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
           </div>
@@ -316,13 +312,13 @@ export default function ProfileTab({
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs mb-2">
               <div className="flex items-center gap-2 font-bold text-zinc-900">
                 <Clock className="h-3.5 w-3.5 text-zinc-800 shrink-0" />
-                <span>Progres Pelaksanaan Magang:</span>
+                <span>Progres Magang:</span>
                 <span className="rounded bg-zinc-950 px-2 py-0.5 text-[11px] font-mono font-bold text-white">
                   {progressPercent}%
                 </span>
               </div>
               <div className="text-[11px] text-zinc-500 font-medium">
-                Hari ke-<strong>{daysPassed}</strong> dari <strong>{daysTotal}</strong> hari ({daysRemaining} hari tersisa)
+                Hari {daysPassed} / {daysTotal} ({daysRemaining} hari tersisa)
               </div>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-200">
@@ -340,14 +336,9 @@ export default function ProfileTab({
         <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
           <div className="flex items-center gap-2">
             <Briefcase className="h-5 w-5 text-zinc-950 shrink-0" />
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-zinc-950">
-                Informasi Magang
-              </h2>
-              <p className="text-xs text-zinc-500">
-                Data resmi penempatan peserta program MagangHub Kemnaker
-              </p>
-            </div>
+            <h2 className="text-base sm:text-lg font-bold text-zinc-950">
+              Informasi Magang
+            </h2>
           </div>
 
           <div className="flex items-center gap-2">
@@ -361,7 +352,7 @@ export default function ProfileTab({
               onClick={openEditModal}
               className="text-xs font-semibold text-zinc-700 hover:text-zinc-950 border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 px-2.5 py-1 rounded-lg transition"
             >
-              Ubah / Lengkapi
+              Edit
             </button>
           </div>
         </div>
@@ -376,7 +367,6 @@ export default function ProfileTab({
             <p className="text-sm font-bold text-zinc-950 leading-snug">
               {displayCompany || '-'}
             </p>
-            <p className="text-[11px] text-zinc-500 mt-1">Mitra Penyelenggara</p>
           </div>
 
           {/* 2. Posisi */}
@@ -387,24 +377,22 @@ export default function ProfileTab({
             <p className="text-sm font-bold text-zinc-950 leading-snug">
               {displayPosition || '-'}
             </p>
-            <p className="text-[11px] text-zinc-500 mt-1">Job Role / Divisi</p>
           </div>
 
           {/* 3. Lokasi Posisi */}
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
-              Lokasi Posisi
+              Lokasi
             </span>
             <p className="text-sm font-bold text-zinc-950 leading-snug">
               {displayLocation || '-'}
             </p>
-            <p className="text-[11px] text-zinc-500 mt-1">Wilayah Kerja / Penempatan</p>
           </div>
 
           {/* 4. Periode Magang */}
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
-              Periode Magang
+              Periode
             </span>
             <p className="text-sm font-bold text-zinc-950 leading-snug">
               {displayStartDate && displayEndDate
@@ -413,9 +401,9 @@ export default function ProfileTab({
                 ? formatDateIndo(displayStartDate)
                 : '-'}
             </p>
-            <p className="text-[11px] text-zinc-500 mt-1">
-              {displayBatch ? `Batch ${displayBatch}` : 'Durasi Pelaksanaan'}
-            </p>
+            {displayBatch && (
+              <p className="text-[11px] text-zinc-500 mt-1">Batch {displayBatch}</p>
+            )}
           </div>
         </div>
 
@@ -423,42 +411,36 @@ export default function ProfileTab({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-zinc-100 text-xs">
           <div className="flex items-center gap-2">
             <UserCheck className="h-4 w-4 text-zinc-700 shrink-0" />
-            <span className="text-zinc-500">Mentor Pembimbing:</span>
+            <span className="text-zinc-500">Mentor:</span>
             <strong className="text-zinc-900">{displayMentor || '-'}</strong>
           </div>
 
           <div className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4 text-zinc-700 shrink-0" />
-            <span className="text-zinc-500">Asal Institusi / Kampus:</span>
+            <span className="text-zinc-500">Institusi:</span>
             <strong className="text-zinc-900">{user.institution_name || user.university || '-'}</strong>
           </div>
         </div>
       </div>
 
-      {/* 3. Rangkuman KPI & Statistik Laporan Lengkap (Monochrome) */}
+      {/* 3. Rangkuman KPI & Statistik (Monochrome) */}
       <div>
         <div className="flex items-center justify-between mb-2.5">
           <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-500">
-            Ringkasan Kehadiran & Laporan Lengkap
+            Statistik Kehadiran
           </h2>
-          <span className="text-[11px] text-zinc-400 font-medium">
-            Total {totalReports} Catatan
-          </span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
           {/* Card 1: Hadir */}
           <div className="rounded-xl border border-zinc-200 bg-white p-3.5 sm:p-4 shadow-sm">
             <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Total Hadir</span>
+              <span>Hadir</span>
               <Calendar className="h-3.5 w-3.5 text-zinc-700" />
             </div>
             <div className="text-xl sm:text-2xl font-black text-zinc-950">
               {loadingReports ? '...' : presentCount}
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">
-              {withLogCount} terisi uraian lengkap
-            </p>
           </div>
 
           {/* Card 2: Disetujui */}
@@ -470,9 +452,6 @@ export default function ProfileTab({
             <div className="text-xl sm:text-2xl font-black text-zinc-950">
               {loadingReports ? '...' : approvedCount}
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">
-              Telah disetujui mentor
-            </p>
           </div>
 
           {/* Card 3: Menunggu / Perlu Revisi */}
@@ -489,49 +468,38 @@ export default function ProfileTab({
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">
-              {revisionCount > 0 ? 'Ada laporan perlu perbaikan' : 'Menunggu review'}
-            </p>
           </div>
 
           {/* Card 4: Izin / Cuti */}
           <div className="rounded-xl border border-zinc-200 bg-white p-3.5 sm:p-4 shadow-sm">
             <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Izin / Sakit</span>
+              <span>Izin / Cuti</span>
               <Clock className="h-3.5 w-3.5 text-zinc-700" />
             </div>
             <div className="text-xl sm:text-2xl font-black text-zinc-950">
               {loadingReports ? '...' : leaveCount}
             </div>
-            <p className="text-[11px] text-zinc-500 mt-0.5">
-              Tingkat kehadiran: <strong>{attendanceRate}%</strong>
-            </p>
           </div>
         </div>
       </div>
 
-      {/* 4. Bagian Data Laporan Lengkap Terbaru Langsung di Profil */}
+      {/* 4. Bagian Data Laporan Terakhir */}
       <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-zinc-100 pb-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <FileText className="h-4.5 w-4.5 text-zinc-950 shrink-0" />
-              <h3 className="text-sm sm:text-base font-bold text-zinc-950">
-                Data Laporan Harian Terakhir
-              </h3>
-            </div>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              Rincian uraian aktivitas lengkap peserta magang yang tercatat di sistem
-            </p>
+        <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4.5 w-4.5 text-zinc-950 shrink-0" />
+            <h3 className="text-sm sm:text-base font-bold text-zinc-950">
+              Laporan Terakhir
+            </h3>
           </div>
 
           {onSelectTab && (
             <button
               type="button"
               onClick={() => onSelectTab('history')}
-              className="flex items-center gap-1 text-xs font-semibold text-zinc-800 hover:text-zinc-950 transition self-start sm:self-auto"
+              className="flex items-center gap-1 text-xs font-semibold text-zinc-800 hover:text-zinc-950 transition"
             >
-              <span>Buka Semua di Riwayat</span>
+              <span>Lihat Semua</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </button>
           )}
@@ -612,7 +580,7 @@ export default function ProfileTab({
                       <div className="bg-white rounded-lg p-2.5 border border-zinc-200">
                         <div className="flex items-center gap-1 font-bold text-zinc-900 mb-0.5">
                           <FileText className="h-3 w-3 text-zinc-700" />
-                          <span>1. Aktivitas:</span>
+                          <span>Aktivitas:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed pl-4">
                           {log.activity_log || '-'}
@@ -622,7 +590,7 @@ export default function ProfileTab({
                       <div className="bg-white rounded-lg p-2.5 border border-zinc-200">
                         <div className="flex items-center gap-1 font-bold text-zinc-900 mb-0.5">
                           <BookOpen className="h-3 w-3 text-zinc-700" />
-                          <span>2. Pembelajaran:</span>
+                          <span>Pembelajaran:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed pl-4">
                           {log.lesson_learned || '-'}
@@ -632,7 +600,7 @@ export default function ProfileTab({
                       <div className="bg-white rounded-lg p-2.5 border border-zinc-200">
                         <div className="flex items-center gap-1 font-bold text-zinc-900 mb-0.5">
                           <AlertCircle className="h-3 w-3 text-zinc-700" />
-                          <span>3. Kendala:</span>
+                          <span>Kendala:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed pl-4">
                           {log.obstacles || '-'}
@@ -671,17 +639,10 @@ export default function ProfileTab({
             </div>
 
             <div className="p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
-              <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-zinc-600">
-                <p className="font-bold text-zinc-900 mb-0.5">Penyesuaian Data Mandiri</p>
-                <p className="leading-relaxed text-[11px]">
-                  Data ini disimpan lokal di browser laptop Anda untuk melengkapi informasi magang resmi (Perusahaan, Posisi, Lokasi, dan Periode).
-                </p>
-              </div>
-
               {/* 1. Perusahaan */}
               <div>
                 <label className="block font-bold text-zinc-800 mb-1">
-                  1. Nama Perusahaan Mitra:
+                  Nama Perusahaan:
                 </label>
                 <input
                   type="text"
@@ -695,13 +656,13 @@ export default function ProfileTab({
               {/* 2. Posisi */}
               <div>
                 <label className="block font-bold text-zinc-800 mb-1">
-                  2. Posisi / Job Role Magang:
+                  Posisi / Role:
                 </label>
                 <input
                   type="text"
                   value={editPosition}
                   onChange={(e) => setEditPosition(e.target.value)}
-                  placeholder="Contoh: Software Engineer Intern / UI UX Designer"
+                  placeholder="Contoh: Software Engineer Intern"
                   className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
                 />
               </div>
@@ -709,13 +670,13 @@ export default function ProfileTab({
               {/* 3. Lokasi Posisi */}
               <div>
                 <label className="block font-bold text-zinc-800 mb-1">
-                  3. Lokasi Posisi / Penempatan:
+                  Lokasi:
                 </label>
                 <input
                   type="text"
                   value={editLocation}
                   onChange={(e) => setEditLocation(e.target.value)}
-                  placeholder="Contoh: Kabupaten Bondowoso / Kota Surabaya"
+                  placeholder="Contoh: Kabupaten Bondowoso"
                   className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
                 />
               </div>
@@ -724,7 +685,7 @@ export default function ProfileTab({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-zinc-800 mb-1">
-                    Tanggal Mulai Magang:
+                    Tanggal Mulai:
                   </label>
                   <input
                     type="date"
@@ -736,7 +697,7 @@ export default function ProfileTab({
 
                 <div>
                   <label className="block font-bold text-zinc-800 mb-1">
-                    Tanggal Selesai Magang:
+                    Tanggal Selesai:
                   </label>
                   <input
                     type="date"
@@ -751,26 +712,26 @@ export default function ProfileTab({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-zinc-800 mb-1">
-                    Batch Magang:
+                    Batch:
                   </label>
                   <input
                     type="text"
                     value={editBatch}
                     onChange={(e) => setEditBatch(e.target.value)}
-                    placeholder="Contoh: 1 / 2"
+                    placeholder="Contoh: 1"
                     className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
                   />
                 </div>
 
                 <div>
                   <label className="block font-bold text-zinc-800 mb-1">
-                    Nama Mentor Pembimbing:
+                    Mentor:
                   </label>
                   <input
                     type="text"
                     value={editMentor}
                     onChange={(e) => setEditMentor(e.target.value)}
-                    placeholder="Nama Mentor Lapangan"
+                    placeholder="Nama mentor pembimbing"
                     className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
                   />
                 </div>
