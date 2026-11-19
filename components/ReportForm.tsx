@@ -290,9 +290,6 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               Tambah Laporan Harian
             </h2>
           </div>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Pelaporan resmi terintegrasi dengan MagangHub Kemnaker
-          </p>
         </div>
 
         <div className="inline-flex self-start sm:self-auto rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-semibold text-zinc-800">
@@ -327,7 +324,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <div>
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
-              Pilih Tanggal Laporan
+              Tanggal
             </label>
             <input
               type="date"
@@ -335,23 +332,20 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               onChange={(e) => setDate(e.target.value)}
               className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
             />
-            <p className="mt-1 text-[11px] text-zinc-400">
-              *Hanya berlaku untuk presensi hari ini.
-            </p>
           </div>
 
           <div>
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
-              Status Kehadiran
+              Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as AttendanceStatus)}
               className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm font-medium text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
             >
-              <option value="PRESENT">Hadir (Isi Laporan Aktivitas)</option>
-              <option value="ON_LEAVE">Tidak Hadir Dengan Keterangan (Izin)</option>
-              <option value="ABSENT">Tidak Hadir Tanpa Keterangan</option>
+              <option value="PRESENT">Hadir</option>
+              <option value="ON_LEAVE">Izin / Sakit</option>
+              <option value="ABSENT">Alfa</option>
             </select>
           </div>
         </div>
@@ -361,28 +355,23 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           <div className="space-y-4 sm:space-y-5 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-3.5 sm:p-5">
             {/* FITUR 1: Generator AI Cepat & Checkbox Tidak Ada Kendala */}
             <div className="rounded-xl border border-zinc-300 bg-white p-4 shadow-sm space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-zinc-100 pb-2.5">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
                 <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-zinc-950">
                   <Sparkles className="h-4 w-4 text-zinc-900" />
-                  <span>Generator Draf Laporan Otomatis (AI)</span>
-                </div>
-
-                <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                  <span>AI Gemini Siap Digunakan</span>
+                  <span>Generate Otomatis (AI)</span>
                 </div>
               </div>
 
               {/* Input Singkat Kegiatan */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-800 mb-1">
-                  1. Tuliskan Kegiatan Singkat Hari Ini:
+                  Kegiatan Singkat Hari Ini:
                 </label>
                 <textarea
                   rows={2}
                   value={quickPrompt}
                   onChange={(e) => setQuickPrompt(e.target.value)}
-                  placeholder="Contoh: Mengerjakan fitur antarmuka dashboard, perbaikan bug autentikasi, dan pengujian API..."
+                  placeholder="Contoh: Koordinasi tim dan pengerjaan modul fitur..."
                   className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 p-2.5 text-xs sm:text-sm text-zinc-900 focus:border-zinc-950 focus:bg-white focus:outline-none"
                 />
               </div>
@@ -397,24 +386,20 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                     className="h-4 w-4 rounded border-zinc-400 text-zinc-950 focus:ring-0 shrink-0"
                   />
                   <span className="text-xs font-bold text-zinc-900 select-none">
-                    Tidak ada kendala operasional / teknis hari ini
+                    Tidak ada kendala hari ini
                   </span>
                 </label>
 
-                {noObstacles ? (
-                  <p className="text-[11px] text-zinc-500 pl-6 leading-relaxed">
-                    Uraian kendala akan otomatis diisi formal &ge;100 karakter: <em>kegiatan berjalan lancar, fasilitas kerja berfungsi optimal, dan tidak ada hambatan operasional signifikan.</em>
-                  </p>
-                ) : (
+                {!noObstacles && (
                   <div className="pl-6 pt-1">
                     <label className="block text-[11px] font-semibold text-zinc-700 mb-1">
-                      Sebutkan Kendala Singkat (Jika Ada):
+                      Kendala Singkat:
                     </label>
                     <input
                       type="text"
                       value={customObstacle}
                       onChange={(e) => setCustomObstacle(e.target.value)}
-                      placeholder="Contoh: Sempat terjadi kendala jaringan internet lambat saat download aset..."
+                      placeholder="Contoh: Terjadi kendala koneksi internet..."
                       className="w-full rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
                     />
                   </div>
@@ -422,19 +407,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               </div>
 
               {/* Tombol Eksekusi Generate */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
-                <span className="text-[11px] text-zinc-400">
-                  *Sekali klik langsung mengisi ketiga form di bawah (&ge;100 karakter).
-                </span>
-
+              <div className="flex items-center justify-end pt-1">
                 <button
                   type="button"
                   onClick={handleGenerateAI}
                   disabled={isGenerating || !quickPrompt.trim()}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 disabled:opacity-40 text-white px-4 py-2 text-xs font-bold transition shadow-sm"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 disabled:opacity-40 text-white px-4 py-2 text-xs font-bold transition shadow-sm w-full sm:w-auto"
                 >
                   <Sparkles className={`h-3.5 w-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
-                  <span>{isGenerating ? 'Menyusun Laporan...' : 'Generate Laporan Otomatis'}</span>
+                  <span>{isGenerating ? 'Menyusun...' : 'Generate Laporan'}</span>
                 </button>
               </div>
             </div>
@@ -443,15 +424,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
             <div>
               <div className="mb-1 flex items-center justify-between">
                 <label className="text-xs sm:text-sm font-bold text-zinc-900">
-                  1. Uraian Aktivitas
+                  1. Aktivitas
                 </label>
-                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min 100 Karakter</span>
+                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min. 100 karakter</span>
               </div>
               <textarea
                 rows={3}
                 value={activityLog}
                 onChange={(e) => setActivityLog(e.target.value)}
-                placeholder="Tulis uraian aktivitas minimal 100 karakter"
+                placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
               {renderCharIndicator(activityLog.trim().length)}
@@ -461,15 +442,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
             <div>
               <div className="mb-1 flex items-center justify-between">
                 <label className="text-xs sm:text-sm font-bold text-zinc-900">
-                  2. Pembelajaran yang Diperoleh
+                  2. Pembelajaran
                 </label>
-                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min 100 Karakter</span>
+                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min. 100 karakter</span>
               </div>
               <textarea
                 rows={3}
                 value={lessonLearned}
                 onChange={(e) => setLessonLearned(e.target.value)}
-                placeholder="Tulis ilmu/pembelajaran yang diperoleh minimal 100 karakter"
+                placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
               {renderCharIndicator(lessonLearned.trim().length)}
@@ -479,15 +460,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
             <div>
               <div className="mb-1 flex items-center justify-between">
                 <label className="text-xs sm:text-sm font-bold text-zinc-900">
-                  3. Kendala yang Dialami
+                  3. Kendala
                 </label>
-                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min 100 Karakter</span>
+                <span className="text-[10px] sm:text-[11px] text-zinc-400">Min. 100 karakter</span>
               </div>
               <textarea
                 rows={3}
                 value={obstacles}
                 onChange={(e) => setObstacles(e.target.value)}
-                placeholder="Tulis kendala/hambatan yang dialami minimal 100 karakter"
+                placeholder="Minimal 100 karakter..."
                 className="w-full rounded-xl border border-zinc-300 bg-white p-2.5 sm:p-3 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:outline-none"
               />
               {renderCharIndicator(obstacles.trim().length)}
@@ -502,7 +483,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 font-bold text-zinc-900 truncate">
-                      <span>Lokasi Presensi:</span>
+                      <span>Lokasi:</span>
                       <span className="text-zinc-700 font-semibold truncate">
                         {coords?.label || 'Kabupaten Bondowoso, Jawa Timur'}
                       </span>
@@ -618,17 +599,17 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           </div>
         )}
 
-        {/* Checkbox Pernyataan & Konfirmasi Wajib Sebelum Kirim */}
+        {/* Checkbox Pernyataan */}
         <div className="rounded-xl border border-zinc-300 bg-zinc-50/80 p-3.5 sm:p-4">
-          <label className="flex items-start gap-2.5 sm:gap-3 cursor-pointer">
+          <label className="flex items-center gap-2.5 sm:gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={isAgreed}
               onChange={(e) => setIsAgreed(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-zinc-400 text-zinc-950 focus:ring-0 shrink-0"
+              className="h-4 w-4 rounded border-zinc-400 text-zinc-950 focus:ring-0 shrink-0"
             />
-            <span className="text-xs text-zinc-800 select-none leading-relaxed font-medium">
-              Saya menyatakan telah meninjau seluruh uraian laporan harian di atas, memastikannya telah sesuai standar minimal 100 karakter, dan siap dikirimkan ke portal MagangHub Kemnaker.
+            <span className="text-xs text-zinc-800 select-none font-medium">
+              Saya menyatakan data laporan ini sudah benar dan siap dikirim.
             </span>
           </label>
         </div>
@@ -650,11 +631,11 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
             className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-6 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 disabled:opacity-40"
           >
             {isSubmitting ? (
-              <span>Mengirim Laporan...</span>
+              <span>Mengirim...</span>
             ) : (
               <>
                 <Send className="h-4 w-4" />
-                <span>Kirim Laporan ke MagangHub</span>
+                <span>Kirim Laporan</span>
               </>
             )}
           </button>
