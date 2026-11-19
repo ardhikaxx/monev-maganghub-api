@@ -374,14 +374,14 @@ ${item.log.obstacles}`;
                 }`}
               >
                 {/* Card Top Header */}
-                <div className="border-b border-zinc-100 bg-zinc-50/70 p-3.5 sm:p-4">
-                  <div className="flex items-start justify-between gap-2.5 sm:gap-3">
-                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-950 text-white">
+                <div className="border-b border-zinc-100 bg-zinc-50/70 p-3 sm:p-4">
+                  <div className="flex items-start justify-between gap-2 sm:gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <div className="flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-950 text-white shadow-sm">
                         <span className="text-[9px] sm:text-[10px] font-bold uppercase leading-none text-zinc-400">
                           {new Date(item.date).toLocaleString('id-ID', { month: 'short' })}
                         </span>
-                        <span className="text-sm sm:text-base font-black leading-tight">
+                        <span className="text-xs sm:text-base font-black leading-tight">
                           {new Date(item.date).getDate()}
                         </span>
                       </div>
@@ -389,7 +389,7 @@ ${item.log.obstacles}`;
                         <h3 className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
                           {formatDateIndo(item.date)}
                         </h3>
-                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-0.5">
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5">
                           <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500">
                             Status:{' '}
                             <strong className="text-zinc-900">
@@ -416,21 +416,21 @@ ${item.log.obstacles}`;
                 </div>
 
                 {/* Card Body Contents */}
-                <div className="p-3.5 sm:p-5 space-y-3 flex-1">
+                <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3 flex-1">
                   {/* Catatan Reviewer jika ada revisi */}
                   {needsRevision && log?.reviewer_notes && (
-                    <div className="rounded-xl border border-zinc-300 bg-zinc-100 p-3 text-xs text-zinc-900">
+                    <div className="rounded-xl border border-zinc-300 bg-zinc-100 p-2.5 sm:p-3 text-xs text-zinc-900">
                       <div className="flex items-center gap-1.5 font-bold text-zinc-950 mb-1">
                         <AlertTriangle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
                         <span>Catatan dari Mentor:</span>
                       </div>
-                      <p className="leading-relaxed pl-4 font-medium">{log.reviewer_notes}</p>
+                      <p className="leading-relaxed pl-3 sm:pl-4 font-medium">{log.reviewer_notes}</p>
                     </div>
                   )}
 
                   {/* Jika Izin / Sakit */}
                   {item.status === 'ON_LEAVE' && (
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs">
+                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5 sm:p-3 text-xs">
                       <p className="font-bold text-zinc-900 mb-1">Alasan Ketidakhadiran:</p>
                       <p className="text-zinc-700 leading-relaxed">
                         {item.leave_reason || 'Tidak ada catatan alasan.'}
@@ -440,14 +440,14 @@ ${item.log.obstacles}`;
 
                   {/* Jika Hadir: 3 Bagian Laporan Lengkap */}
                   {item.status === 'PRESENT' && log ? (
-                    <div className="space-y-2.5 text-xs">
+                    <div className="space-y-2 text-xs">
                       {/* 1. Uraian Aktivitas */}
                       <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
                         <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
                           <FileText className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
                           <span>Aktivitas:</span>
                         </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
                           {log.activity_log || '-'}
                         </p>
                       </div>
@@ -458,7 +458,7 @@ ${item.log.obstacles}`;
                           <BookOpen className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
                           <span>Pembelajaran:</span>
                         </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
                           {log.lesson_learned || '-'}
                         </p>
                       </div>
@@ -469,7 +469,7 @@ ${item.log.obstacles}`;
                           <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
                           <span>Kendala:</span>
                         </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
                           {log.obstacles || '-'}
                         </p>
                       </div>
@@ -482,12 +482,12 @@ ${item.log.obstacles}`;
                 </div>
 
                 {/* Card Bottom Footer */}
-                <div className="border-t border-zinc-100 bg-zinc-50/50 px-3.5 py-2.5 sm:px-5 sm:py-3 flex items-center justify-between gap-2">
-                  <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400">
+                <div className="border-t border-zinc-100 bg-zinc-50/50 px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between gap-2">
+                  <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400 truncate max-w-[120px] sm:max-w-none">
                     ID: {item.id ? String(item.id).slice(0, 8) : '-'}...
                   </span>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     {item.log && (
                       <button
                         type="button"

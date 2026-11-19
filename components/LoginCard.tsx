@@ -41,31 +41,31 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
     <div className="mx-auto w-full max-w-xl">
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
         {/* Flat Monochrome Header */}
-        <div className="bg-zinc-950 px-6 py-6 text-white">
+        <div className="bg-zinc-950 px-4 py-4 sm:px-6 sm:py-6 text-white">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 text-white shrink-0 border border-zinc-700">
-              <KeyRound className="h-5 w-5" />
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-zinc-800 text-white shrink-0 border border-zinc-700">
+              <KeyRound className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold tracking-tight">Masuk Monev MagangHub</h1>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <h1 className="text-sm sm:text-lg font-bold tracking-tight">Masuk Monev MagangHub</h1>
+              <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 Gunakan token sesi akun Kemnaker Anda
               </p>
             </div>
           </div>
         </div>
 
-        <div className="p-5 sm:p-7 space-y-4">
+        <div className="p-4 sm:p-7 space-y-3.5 sm:space-y-4">
           {/* Info Auto-Refresh */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-700 flex items-center gap-2.5">
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5 sm:p-3 text-xs text-zinc-700 flex items-center gap-2 sm:gap-2.5">
             <Shield className="h-4 w-4 text-zinc-950 shrink-0" />
-            <p className="text-zinc-600">
+            <p className="text-zinc-600 text-[11px] sm:text-xs leading-relaxed">
               Sesi <strong>auto-refresh aktif</strong>. Cukup masukkan token satu kali.
             </p>
           </div>
 
           {errorMessage && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-zinc-300 bg-zinc-100 p-3.5 text-xs text-zinc-900">
+            <div className="flex items-start gap-2.5 rounded-xl border border-zinc-300 bg-zinc-100 p-3 sm:p-3.5 text-xs text-zinc-900">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700" />
               <div>
                 <p className="font-bold">Gagal</p>
@@ -74,9 +74,9 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
             <div>
-              <label htmlFor="token" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
+              <label htmlFor="token" className="block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
                 Token MagangHub
               </label>
               <textarea
@@ -85,7 +85,7 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value)}
                 placeholder="Paste token JWT Anda di sini..."
-                className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 p-3 font-mono text-xs text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 p-2.5 sm:p-3 font-mono text-xs text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
             </div>
@@ -113,7 +113,7 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
                 onClick={() => setShowGuide(!showGuide)}
                 className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 hover:text-zinc-950"
               >
-                <HelpCircle className="h-4 w-4" />
+                <HelpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span>{showGuide ? 'Tutup Panduan' : 'Panduan Ambil Token'}</span>
               </button>
 
@@ -129,7 +129,7 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
             </div>
 
             {showGuide && (
-              <div className="mt-3.5 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-xs text-zinc-700 space-y-2.5">
+              <div className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3 sm:p-4 text-xs text-zinc-700 space-y-2">
                 <p className="font-bold text-zinc-900">
                   Langkah Mengambil Token:
                 </p>
@@ -154,14 +154,14 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
                   </li>
                 </ol>
 
-                <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-2">
-                  <code className="font-mono text-[11px] text-zinc-900 truncate pr-2">
+                <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-2 overflow-hidden">
+                  <code className="font-mono text-[10px] sm:text-[11px] text-zinc-900 truncate pr-2">
                     {consoleSnippet}
                   </code>
                   <button
                     onClick={copySnippet}
                     type="button"
-                    className="flex shrink-0 items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-[11px] font-semibold text-zinc-800 hover:bg-zinc-200"
+                    className="flex shrink-0 items-center gap-1 rounded bg-zinc-100 px-2 py-1 text-[10px] sm:text-[11px] font-semibold text-zinc-800 hover:bg-zinc-200"
                   >
                     {copiedCode ? (
                       <>

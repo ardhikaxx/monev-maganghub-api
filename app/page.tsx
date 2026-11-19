@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import BottomNav from '@/components/BottomNav';
 import LoginCard from '@/components/LoginCard';
 import ReportForm from '@/components/ReportForm';
 import AttendanceHistory from '@/components/AttendanceHistory';
@@ -175,7 +176,7 @@ export default function Home() {
         onSelectTab={setActiveTab}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-4 sm:px-6 sm:py-6">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-4 pb-24 sm:px-6 sm:py-6 sm:pb-6">
         {!token ? (
           <div className="py-4 sm:py-10">
             <LoginCard
@@ -186,85 +187,87 @@ export default function Home() {
         ) : (
           <div className="space-y-4 sm:space-y-6">
             {/* Top Greeting Bar (Clean Monochrome) */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-zinc-200 pb-3">
-              <div>
-                <h1 className="text-lg sm:text-xl font-black text-zinc-950 tracking-tight">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-b border-zinc-200 pb-3">
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-xl font-black text-zinc-950 tracking-tight truncate">
                   Halo, {user?.name || 'Peserta Magang'}!
                 </h1>
-                <p className="text-xs text-zinc-500 flex items-center gap-1.5 mt-0.5">
-                  <Building2 className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                  <span>{user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker'}</span>
+                <div className="text-[11px] sm:text-xs text-zinc-500 flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
+                  <span className="flex items-center gap-1.5 font-medium text-zinc-700">
+                    <Building2 className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                    <span className="truncate max-w-[200px] sm:max-w-none">{user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker'}</span>
+                  </span>
                   {user?.internship_start_date && (
                     <>
-                      <span>&bull;</span>
+                      <span className="text-zinc-300 hidden sm:inline">&bull;</span>
                       <span className="text-zinc-500">
-                        {formatDateIndo(user.internship_start_date)} -{' '}
+                        {formatDateIndo(user.internship_start_date)} –{' '}
                         {user.internship_end_date ? formatDateIndo(user.internship_end_date) : 'Selesai'}
                       </span>
                     </>
                   )}
-                </p>
+                </div>
               </div>
 
               <a
                 href="https://monev.maganghub.kemnaker.go.id/dashboard"
                 target="_blank"
                 rel="noreferrer"
-                className="self-start sm:self-auto flex items-center gap-1 text-[11px] font-semibold text-zinc-800 hover:text-zinc-950 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded-lg border border-zinc-200 transition"
+                className="self-start sm:self-auto inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-800 hover:text-zinc-950 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded-lg border border-zinc-200 transition shrink-0"
               >
                 <span>Portal Kemnaker</span>
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
 
-            {/* Navigation Tabs (Scrollable on Mobile, with Profile Tab) */}
-            <div className="relative -mx-3 px-3 sm:mx-0 sm:px-0">
-              <div className="flex items-center gap-1.5 sm:gap-2 border-b border-zinc-200 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth pb-px">
+            {/* Navigation Tabs (Desktop / Tablet view - hidden on mobile) */}
+            <div className="hidden sm:block relative sm:mx-0 sm:px-0">
+              <div className="flex items-center gap-1 sm:gap-2 border-b border-zinc-200 overflow-x-auto no-scrollbar whitespace-nowrap scroll-smooth pb-px">
                 <button
                   onClick={() => setActiveTab('form')}
-                  className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
+                  className={`flex items-center gap-1.5 sm:gap-2 border-b-2 px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
                     activeTab === 'form'
                       ? 'border-zinc-950 text-zinc-950 font-bold'
                       : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <FileText className="h-4 w-4" />
+                  <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span>Laporan</span>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('history')}
-                  className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
+                  className={`flex items-center gap-1.5 sm:gap-2 border-b-2 px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
                     activeTab === 'history'
                       ? 'border-zinc-950 text-zinc-950 font-bold'
                       : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span>Riwayat</span>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
+                  className={`flex items-center gap-1.5 sm:gap-2 border-b-2 px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
                     activeTab === 'profile'
                       ? 'border-zinc-950 text-zinc-950 font-bold'
                       : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <User className="h-4 w-4" />
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span>Profil</span>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('token')}
-                  className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
+                  className={`flex items-center gap-1.5 sm:gap-2 border-b-2 px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold transition shrink-0 ${
                     activeTab === 'token'
                       ? 'border-zinc-950 text-zinc-950 font-bold'
                       : 'border-transparent text-zinc-500 hover:text-zinc-900'
                   }`}
                 >
-                  <Key className="h-4 w-4" />
+                  <Key className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span>Token</span>
                 </button>
               </div>
@@ -405,6 +408,11 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Floating Bottom Nav Capsule (Mobile Only) */}
+      {token && (
+        <BottomNav activeTab={activeTab} onSelectTab={setActiveTab} />
+      )}
     </div>
   );
 }

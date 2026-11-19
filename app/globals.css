@@ -26,3 +26,13 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Sembunyikan Next.js devtools indicator & overlay di browser */
+nextjs-portal,
+#nextjs-dev-tools,
+[data-nextjs-dev-tools-button],
+[data-nextjs-toast-wrapper] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

@@ -286,9 +286,9 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     const percent = Math.min(100, Math.round((currentLength / MIN_CHARS) * 100));
 
     return (
-      <div className="mt-1 flex items-center justify-between text-[11px] sm:text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="h-1 w-16 sm:w-20 overflow-hidden rounded-full bg-zinc-200">
+      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="h-1 w-14 sm:w-20 overflow-hidden rounded-full bg-zinc-200 shrink-0">
             <div
               className={`h-full transition-all duration-300 ${
                 isPassing ? 'bg-zinc-950' : 'bg-zinc-400'
@@ -296,46 +296,46 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
               style={{ width: `${percent}%` }}
             />
           </div>
-          <span className={`font-semibold ${isPassing ? 'text-zinc-950' : 'text-zinc-500'}`}>
+          <span className={`font-semibold truncate ${isPassing ? 'text-zinc-950' : 'text-zinc-500'}`}>
             {isPassing ? (
               <span className="flex items-center gap-0.5">
-                <Check className="h-3 w-3" /> Memenuhi syarat
+                <Check className="h-3 w-3 shrink-0" /> Memenuhi
               </span>
             ) : (
-              `Kurang ${MIN_CHARS - currentLength} karakter lagi`
+              `Kurang ${MIN_CHARS - currentLength} lagi`
             )}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 font-mono text-zinc-500 text-[11px]">
+        <div className="flex items-center gap-1.5 font-mono text-zinc-500 text-[10px] sm:text-[11px] shrink-0">
           <span className="font-semibold text-zinc-800">{wordCount} kata</span>
           <span>•</span>
-          <span>{currentLength} karakter (min. {MIN_CHARS})</span>
+          <span>{currentLength} kar (min. {MIN_CHARS})</span>
         </div>
       </div>
     );
   };
 
   return (
-    <div ref={formContainerRef} className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 md:p-8 shadow-sm">
+    <div ref={formContainerRef} className="rounded-2xl border border-zinc-200 bg-white p-3.5 sm:p-6 md:p-8 shadow-sm">
       {/* Form Header (Monochrome) */}
-      <div className="mb-5 sm:mb-6 flex flex-col gap-2.5 border-b border-zinc-100 pb-4 sm:pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-4 sm:mb-6 flex flex-col gap-2 border-b border-zinc-100 pb-3 sm:pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <FileText className="h-4.5 w-4.5 text-zinc-900 shrink-0" />
+            <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-zinc-900 shrink-0" />
             <h2 className="text-base sm:text-lg font-bold text-zinc-950">
               Tambah Laporan Harian
             </h2>
           </div>
         </div>
 
-        <div className="inline-flex self-start sm:self-auto rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-semibold text-zinc-800">
+        <div className="inline-flex self-start sm:self-auto rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-semibold text-zinc-800">
           {formatDateIndo(date)}
         </div>
       </div>
 
       {alertInfo && (
         <div
-          className={`mb-5 sm:mb-6 flex items-start justify-between gap-2.5 rounded-xl border p-3.5 sm:p-4 text-xs sm:text-sm ${
+          className={`mb-4 sm:mb-6 flex items-start justify-between gap-2.5 rounded-xl border p-3 sm:p-4 text-xs sm:text-sm ${
             alertInfo.type === 'success'
               ? 'border-zinc-300 bg-zinc-100 text-zinc-950'
               : 'border-zinc-400 bg-zinc-100 text-zinc-950'
@@ -398,15 +398,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
 
         {/* Jika Hadir: Bagian Generator AI & 3 Textarea */}
         {status === 'PRESENT' && (
-          <div className="space-y-4 sm:space-y-5 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-3.5 sm:p-5">
+          <div className="space-y-3 sm:space-y-4 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-4 md:p-5">
             {/* FITUR 1: Generator AI Cepat & Checkbox Tidak Ada Kendala */}
-            <div className="rounded-xl border border-zinc-300 bg-white p-4 shadow-sm space-y-3">
-              <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
+            <div className="rounded-xl border border-zinc-300 bg-white p-3 sm:p-4 shadow-sm space-y-2.5 sm:space-y-3">
+              <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 border-b border-zinc-100 pb-2">
                 <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-zinc-950">
-                  <Sparkles className="h-4 w-4 text-zinc-900" />
+                  <Sparkles className="h-4 w-4 text-zinc-900 shrink-0" />
                   <span>Generate Otomatis (AI)</span>
                 </div>
-                <span className="text-[11px] text-zinc-500 font-medium">
+                <span className="text-[10px] sm:text-[11px] text-zinc-500 font-medium self-start xs:self-auto">
                   Format: Padat & Ringkas (min. 100 kar)
                 </span>
               </div>
