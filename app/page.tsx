@@ -229,7 +229,7 @@ export default function Home() {
                   }`}
                 >
                   <FileText className="h-4 w-4" />
-                  <span>Tambah Laporan</span>
+                  <span>Laporan</span>
                 </button>
 
                 <button
@@ -241,7 +241,7 @@ export default function Home() {
                   }`}
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>Riwayat & Evaluasi</span>
+                  <span>Riwayat</span>
                 </button>
 
                 <button
@@ -253,7 +253,7 @@ export default function Home() {
                   }`}
                 >
                   <User className="h-4 w-4" />
-                  <span>Profil Peserta</span>
+                  <span>Profil</span>
                 </button>
 
                 <button
@@ -265,7 +265,7 @@ export default function Home() {
                   }`}
                 >
                   <Key className="h-4 w-4" />
-                  <span>Status Token</span>
+                  <span>Token</span>
                 </button>
               </div>
             </div>
@@ -285,48 +285,42 @@ export default function Home() {
 
                   <div className="space-y-4 sm:space-y-5">
                     {/* Ringkasan Tips Pengisian */}
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
+                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">
+                      <div className="flex items-center gap-2 mb-2.5">
                         <Sparkles className="h-4 w-4 text-zinc-950 shrink-0" />
-                        <h3 className="text-sm font-bold text-zinc-950">
-                          Panduan Standar Kemnaker
+                        <h3 className="text-xs sm:text-sm font-bold text-zinc-950 uppercase tracking-wider">
+                          Ketentuan Laporan
                         </h3>
                       </div>
-                      <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed">
+                      <ul className="space-y-2 text-xs text-zinc-600 leading-relaxed">
                         <li className="flex items-start gap-2">
                           <span className="font-bold text-zinc-950">&bull;</span>
-                          <span>
-                            <strong>Minimal 100 Karakter:</strong> Tiap uraian (aktivitas, pembelajaran, kendala) wajib berisi sekurang-kurangnya 100 karakter.
-                          </span>
+                          <span>Minimal 100 karakter pada setiap uraian.</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="font-bold text-zinc-950">&bull;</span>
-                          <span>
-                            <strong>Hanya Hari Ini:</strong> Presensi dan laporan kehadiran baru tidak dapat dibuat secara mundur.
-                          </span>
+                          <span>Presensi hanya berlaku untuk hari ini.</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="font-bold text-zinc-950">&bull;</span>
-                          <span>
-                            <strong>Perbaikan Uraian:</strong> Jika status kehadiran berubah menjadi <em>Perlu Perbaikan</em>, segera perbarui pada tab Riwayat.
-                          </span>
+                          <span>Periksa status review mentor berkala.</span>
                         </li>
                       </ul>
                     </div>
 
                     {/* Riwayat Mini CTA */}
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm">
-                      <h3 className="text-sm font-bold text-zinc-950 mb-1.5">
-                        Lihat Riwayat Lengkap
+                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">
+                      <h3 className="text-xs sm:text-sm font-bold text-zinc-950 uppercase tracking-wider mb-1">
+                        Riwayat Laporan
                       </h3>
-                      <p className="text-xs text-zinc-500 mb-3.5">
-                        Periksa kembali status persetujuan mentor dan evaluasi bulanan magang Anda.
+                      <p className="text-xs text-zinc-500 mb-3">
+                        Pantau status persetujuan mentor dan catatan perbaikan.
                       </p>
                       <button
                         onClick={() => setActiveTab('history')}
-                        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 text-xs font-semibold text-zinc-800 hover:bg-zinc-100 transition text-center"
+                        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-100 transition text-center"
                       >
-                        Buka Tab Riwayat & Evaluasi &rarr;
+                        Buka Riwayat &rarr;
                       </button>
                     </div>
                   </div>
@@ -352,27 +346,24 @@ export default function Home() {
               {activeTab === 'token' && (
                 <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-4 sm:p-8 shadow-sm space-y-5 sm:space-y-6">
                   <div>
-                    <h2 className="text-lg sm:text-xl font-bold text-zinc-950">
-                      Informasi Sesi & Token MagangHub
+                    <h2 className="text-base sm:text-lg font-bold text-zinc-950">
+                      Sesi & Token
                     </h2>
-                    <p className="text-xs text-zinc-500 mt-0.5">
-                      Detail token otorisasi yang sedang aktif di aplikasi Anda
-                    </p>
                   </div>
 
                   <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 sm:p-4 space-y-2 text-xs">
                     <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-zinc-200 gap-0.5 sm:gap-0">
-                      <span className="text-zinc-500">Masa Berlaku Token:</span>
+                      <span className="text-zinc-500">Masa Berlaku:</span>
                       <span className="font-semibold text-zinc-800">
                         {tokenExpiry || 'Tidak diketahui'}
                       </span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-zinc-200">
                       <span className="text-zinc-500">Status Sesi:</span>
-                      <span className="font-semibold text-zinc-950">Aktif & Terhubung (Auto-Refresh)</span>
+                      <span className="font-semibold text-zinc-950">Aktif (Auto-Refresh)</span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:justify-between py-1 gap-0.5 sm:gap-0">
-                      <span className="text-zinc-500">Target Server:</span>
+                      <span className="text-zinc-500">Server:</span>
                       <span className="font-mono text-zinc-700 break-all">
                         monev-api.maganghub.kemnaker.go.id
                       </span>
