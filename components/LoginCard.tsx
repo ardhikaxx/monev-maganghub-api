@@ -41,37 +41,34 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
     <div className="mx-auto w-full max-w-xl">
       <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
         {/* Flat Monochrome Header */}
-        <div className="bg-zinc-950 px-6 py-7 text-white">
+        <div className="bg-zinc-950 px-6 py-6 text-white">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 text-white shrink-0 border border-zinc-700">
               <KeyRound className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-lg font-bold tracking-tight">Masuk ke Portal Monev</h1>
+              <h1 className="text-base sm:text-lg font-bold tracking-tight">Masuk Monev MagangHub</h1>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Hubungkan sesi akun MagangHub Kemnaker Anda
+                Gunakan token sesi akun Kemnaker Anda
               </p>
             </div>
           </div>
         </div>
 
         <div className="p-5 sm:p-7 space-y-4">
-          {/* Info Auto-Refresh & Single Login */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-700 flex items-start gap-2.5">
-            <Shield className="h-4 w-4 text-zinc-950 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-bold text-zinc-900">Sistem Sesi Terintegrasi (Auto-Refresh):</p>
-              <p className="text-zinc-600 mt-0.5 leading-relaxed">
-                Anda <strong>cukup memasukkan token sekali saja</strong>. Aplikasi akan otomatis memperpanjang masa aktif sesi Anda di latar belakang sehingga tidak perlu mengambil token berulang kali.
-              </p>
-            </div>
+          {/* Info Auto-Refresh */}
+          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-700 flex items-center gap-2.5">
+            <Shield className="h-4 w-4 text-zinc-950 shrink-0" />
+            <p className="text-zinc-600">
+              Sesi <strong>auto-refresh aktif</strong>. Cukup masukkan token satu kali.
+            </p>
           </div>
 
           {errorMessage && (
             <div className="flex items-start gap-2.5 rounded-xl border border-zinc-300 bg-zinc-100 p-3.5 text-xs text-zinc-900">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-zinc-700" />
               <div>
-                <p className="font-bold">Otentikasi Gagal</p>
+                <p className="font-bold">Gagal</p>
                 <p className="text-zinc-600 mt-0.5">{errorMessage}</p>
               </div>
             </div>
@@ -80,14 +77,14 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="token" className="block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1">
-                Bearer Token Monev MagangHub
+                Token MagangHub
               </label>
               <textarea
                 id="token"
-                rows={4}
+                rows={3}
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                placeholder="Paste token JWT Anda di sini..."
                 className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 p-3 font-mono text-xs text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
                 disabled={isLoading}
               />
@@ -96,37 +93,37 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
             <button
               type="submit"
               disabled={isLoading || !tokenInput.trim()}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 py-3 text-xs sm:text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-40"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-950 py-2.5 text-xs sm:text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-40"
             >
               {isLoading ? (
-                <span>Memverifikasi Token...</span>
+                <span>Memverifikasi...</span>
               ) : (
                 <>
-                  <span>Masuk ke Dashboard</span>
+                  <span>Masuk</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-4 border-t border-zinc-100 pt-4">
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-4 border-t border-zinc-100 pt-3">
+            <div className="flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => setShowGuide(!showGuide)}
                 className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 hover:text-zinc-950"
               >
                 <HelpCircle className="h-4 w-4" />
-                <span>{showGuide ? 'Sembunyikan Panduan' : 'Cara Mengambil Token Sekali Pakai?'}</span>
+                <span>{showGuide ? 'Tutup Panduan' : 'Panduan Ambil Token'}</span>
               </button>
 
               <a
                 href="https://monev.maganghub.kemnaker.go.id/dashboard"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-950 hover:underline"
+                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-950"
               >
-                <span>Buka Web Monev</span>
+                <span>Portal Monev</span>
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
