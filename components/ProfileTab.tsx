@@ -4,11 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MonevUser, Attendance } from '@/types/monev';
 import { formatDateIndo } from '@/lib/monev';
 import {
-  Building2,
   Calendar,
-  ShieldCheck,
-  Copy,
-  Check,
   UserCheck,
   Clock,
   RefreshCw,
@@ -21,10 +17,7 @@ import {
   ExternalLink,
   GraduationCap,
   ArrowRight,
-  Edit3,
-  X,
   Briefcase,
-  Layers,
 } from 'lucide-react';
 
 interface ProfileTabProps {
@@ -34,48 +27,15 @@ interface ProfileTabProps {
   onRefreshUser?: () => void;
 }
 
-interface CustomInternshipInfo {
-  company?: string;
-  position?: string;
-  location?: string;
-  startDate?: string;
-  endDate?: string;
-  batch?: string;
-  mentor?: string;
-}
-
 export default function ProfileTab({
   user,
   token,
   onSelectTab,
   onRefreshUser,
 }: ProfileTabProps) {
-  const [copiedId, setCopiedId] = useState(false);
   const [attendances, setAttendances] = useState<Attendance[]>([]);
   const [loadingReports, setLoadingReports] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // Modal Sesuaikan Informasi Magang
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [customInfo, setCustomInfo] = useState<CustomInternshipInfo>({});
-  const [editCompany, setEditCompany] = useState('');
-  const [editPosition, setEditPosition] = useState('');
-  const [editLocation, setEditLocation] = useState('');
-  const [editStartDate, setEditStartDate] = useState('');
-  const [editEndDate, setEditEndDate] = useState('');
-  const [editBatch, setEditBatch] = useState('');
-  const [editMentor, setEditMentor] = useState('');
-
-  // Restore custom internship info from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('monev-custom-internship-info');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setCustomInfo(parsed);
-      }
-    } catch {}
-  }, []);
 
   // Ambil data laporan lengkap untuk profil
   const fetchReportData = async () => {
@@ -126,86 +86,39 @@ export default function ProfileTab({
     );
   }
 
-  // Tentukan data gabungan (Custom override || Server API Kemnaker)
+  // Data resmi dari API Kemnaker
   const displayCompany =
-    customInfo.company ||
     user.internship_company ||
     user.company ||
     user.company_name ||
     '';
 
   const displayPosition =
-    customInfo.position ||
     user.job_role ||
     user.position ||
     '';
 
   const displayLocation =
-    customInfo.location ||
     user.internship_location_regency_name ||
     user.location ||
     '';
 
   const displayStartDate =
-    customInfo.startDate ||
     user.internship_start_date ||
     '';
 
   const displayEndDate =
-    customInfo.endDate ||
     user.internship_end_date ||
     '';
 
   const displayBatch =
-    customInfo.batch ||
     user.internship_batch_name ||
     user.batch_name ||
     '';
 
   const displayMentor =
-    customInfo.mentor ||
     user.mentor_name ||
     '';
-
-  const openEditModal = () => {
-    setEditCompany(displayCompany);
-    setEditPosition(displayPosition);
-    setEditLocation(displayLocation);
-    setEditStartDate(displayStartDate ? displayStartDate.slice(0, 10) : '');
-    setEditEndDate(displayEndDate ? displayEndDate.slice(0, 10) : '');
-    setEditBatch(displayBatch);
-    setEditMentor(displayMentor);
-    setShowEditModal(true);
-  };
-
-  const handleSaveCustomInfo = () => {
-    const updated: CustomInternshipInfo = {
-      company: editCompany.trim(),
-      position: editPosition.trim(),
-      location: editLocation.trim(),
-      startDate: editStartDate.trim(),
-      endDate: editEndDate.trim(),
-      batch: editBatch.trim(),
-      mentor: editMentor.trim(),
-    };
-    setCustomInfo(updated);
-    localStorage.setItem('monev-custom-internship-info', JSON.stringify(updated));
-    setShowEditModal(false);
-  };
-
-  const handleResetCustomInfo = () => {
-    setCustomInfo({});
-    localStorage.removeItem('monev-custom-internship-info');
-    setShowEditModal(false);
-  };
-
-  const copyId = () => {
-    if (user.id) {
-      navigator.clipboard.writeText(String(user.id));
-      setCopiedId(true);
-      setTimeout(() => setCopiedId(false), 2000);
-    }
-  };
 
   // Hitung progres durasi magang
   let progressPercent = 0;
@@ -223,19 +136,6 @@ export default function ProfileTab({
     daysRemaining = Math.max(0, daysTotal - daysPassed);
     progressPercent = Math.min(100, Math.round((daysPassed / daysTotal) * 100));
   }
-
-  // Statistik Laporan Lengkap
-  const totalReports = attendances.length;
-  const presentCount = attendances.filter((a) => a.status === 'PRESENT').length;
-  const approvedCount = attendances.filter((a) => a.approval_status === 'APPROVED').length;
-  const pendingCount = attendances.filter(
-    (a) => a.approval_status === 'SUBMITTED' && a.log?.state !== 'NEEDS_REVISION'
-  ).length;
-  const revisionCount = attendances.filter((a) => a.log?.state === 'NEEDS_REVISION').length;
-  const leaveCount = attendances.filter((a) => a.status === 'ON_LEAVE').length;
-  const withLogCount = attendances.filter((a) => a.log && a.log.activity_log).length;
-
-  const attendanceRate = daysPassed > 0 ? Math.min(100, Math.round((presentCount / daysPassed) * 100)) : 100;
 
   const initials = user.name
     ? user.name
@@ -275,19 +175,9 @@ export default function ProfileTab({
           <div className="flex items-center gap-1.5 sm:gap-2 self-stretch sm:self-auto pt-1 sm:pt-0">
             <button
               type="button"
-              onClick={openEditModal}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 sm:px-3 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition text-center"
-              title="Sesuaikan Data Magang"
-            >
-              <Edit3 className="h-3.5 w-3.5 shrink-0" />
-              <span>Sesuaikan</span>
-            </button>
-
-            <button
-              type="button"
               onClick={handleRefreshAll}
               disabled={isRefreshing}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 sm:px-3 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition disabled:opacity-50 text-center"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition disabled:opacity-50 text-center"
               title="Segarkan Data"
             >
               <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -298,7 +188,7 @@ export default function ProfileTab({
               href="https://monev.maganghub.kemnaker.go.id/dashboard"
               target="_blank"
               rel="noreferrer"
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl bg-white px-2.5 py-1.5 sm:px-3 text-xs font-bold text-zinc-950 hover:bg-zinc-100 transition text-center"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-zinc-950 hover:bg-zinc-100 transition text-center"
             >
               <span>Portal Asli</span>
               <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
@@ -346,14 +236,6 @@ export default function ProfileTab({
               <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
               Aktif
             </span>
-
-            <button
-              type="button"
-              onClick={openEditModal}
-              className="text-xs font-semibold text-zinc-700 hover:text-zinc-950 border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg transition"
-            >
-              Edit
-            </button>
           </div>
         </div>
 
@@ -423,67 +305,7 @@ export default function ProfileTab({
         </div>
       </div>
 
-      {/* 3. Rangkuman KPI & Statistik (Monochrome) */}
-      <div>
-        <div className="flex items-center justify-between mb-2 sm:mb-2.5">
-          <h2 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Statistik Kehadiran
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
-          {/* Card 1: Hadir */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:p-4 shadow-sm">
-            <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Hadir</span>
-              <Calendar className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-            </div>
-            <div className="text-lg sm:text-2xl font-black text-zinc-950">
-              {loadingReports ? '...' : presentCount}
-            </div>
-          </div>
-
-          {/* Card 2: Disetujui */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:p-4 shadow-sm">
-            <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Disetujui</span>
-              <CheckCircle2 className="h-3.5 w-3.5 text-zinc-950 shrink-0" />
-            </div>
-            <div className="text-lg sm:text-2xl font-black text-zinc-950">
-              {loadingReports ? '...' : approvedCount}
-            </div>
-          </div>
-
-          {/* Card 3: Menunggu / Perlu Revisi */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:p-4 shadow-sm">
-            <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Evaluasi</span>
-              <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-            </div>
-            <div className="text-lg sm:text-2xl font-black text-zinc-950">
-              {loadingReports ? '...' : pendingCount}
-              {revisionCount > 0 && (
-                <span className="text-[11px] sm:text-xs font-semibold text-zinc-600 ml-1">
-                  ({revisionCount} revisi)
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Card 4: Izin / Cuti */}
-          <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:p-4 shadow-sm">
-            <div className="flex items-center justify-between text-zinc-500 text-xs mb-1">
-              <span>Izin / Cuti</span>
-              <Clock className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-            </div>
-            <div className="text-lg sm:text-2xl font-black text-zinc-950">
-              {loadingReports ? '...' : leaveCount}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. Bagian Data Laporan Terakhir */}
+      {/* 3. Bagian Data Laporan Terakhir */}
       <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm space-y-3.5 sm:space-y-4">
         <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
           <div className="flex items-center gap-2">
@@ -618,156 +440,6 @@ export default function ProfileTab({
           </div>
         )}
       </div>
-
-      {/* Modal Sesuaikan Informasi Magang */}
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-sm p-3 sm:p-4">
-          <div className="w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-xl border border-zinc-200">
-            <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-3 sm:px-5 sm:py-4 shrink-0">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-4.5 w-4.5 text-zinc-900" />
-                <h3 className="font-bold text-sm sm:text-base text-zinc-900">
-                  Sesuaikan Informasi Magang
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="text-zinc-400 hover:text-zinc-700 p-1"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-5 space-y-3 sm:space-y-3.5 overflow-y-auto flex-1 text-xs">
-              {/* 1. Perusahaan */}
-              <div>
-                <label className="block font-bold text-zinc-800 mb-1">
-                  Nama Perusahaan:
-                </label>
-                <input
-                  type="text"
-                  value={editCompany}
-                  onChange={(e) => setEditCompany(e.target.value)}
-                  placeholder="Contoh: PT Bank Rakyat Indonesia (Persero) Tbk"
-                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                />
-              </div>
-
-              {/* 2. Posisi */}
-              <div>
-                <label className="block font-bold text-zinc-800 mb-1">
-                  Posisi / Role:
-                </label>
-                <input
-                  type="text"
-                  value={editPosition}
-                  onChange={(e) => setEditPosition(e.target.value)}
-                  placeholder="Contoh: Software Engineer Intern"
-                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                />
-              </div>
-
-              {/* 3. Lokasi Posisi */}
-              <div>
-                <label className="block font-bold text-zinc-800 mb-1">
-                  Lokasi:
-                </label>
-                <input
-                  type="text"
-                  value={editLocation}
-                  onChange={(e) => setEditLocation(e.target.value)}
-                  placeholder="Contoh: Kabupaten Bondowoso"
-                  className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                />
-              </div>
-
-              {/* 4. Periode Magang (Mulai & Selesai) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-zinc-800 mb-1">
-                    Tanggal Mulai:
-                  </label>
-                  <input
-                    type="date"
-                    value={editStartDate}
-                    onChange={(e) => setEditStartDate(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-zinc-800 mb-1">
-                    Tanggal Selesai:
-                  </label>
-                  <input
-                    type="date"
-                    value={editEndDate}
-                    onChange={(e) => setEditEndDate(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* 5. Batch & Mentor */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-zinc-800 mb-1">
-                    Batch:
-                  </label>
-                  <input
-                    type="text"
-                    value={editBatch}
-                    onChange={(e) => setEditBatch(e.target.value)}
-                    placeholder="Contoh: 1"
-                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-zinc-800 mb-1">
-                    Mentor:
-                  </label>
-                  <input
-                    type="text"
-                    value={editMentor}
-                    onChange={(e) => setEditMentor(e.target.value)}
-                    placeholder="Nama mentor pembimbing"
-                    className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-xs text-zinc-900 focus:border-zinc-950 focus:outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col-reverse xs:flex-row items-stretch xs:items-center justify-between gap-2.5 border-t border-zinc-100 bg-zinc-50 px-4 py-3 sm:px-5 shrink-0">
-              <button
-                type="button"
-                onClick={handleResetCustomInfo}
-                className="text-center xs:text-left text-xs text-zinc-500 hover:text-zinc-800 font-semibold underline py-1"
-              >
-                Reset ke Data Asli Server
-              </button>
-
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 xs:flex-none rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 text-center"
-                >
-                  Batal
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleSaveCustomInfo}
-                  className="flex-1 xs:flex-none rounded-lg bg-zinc-950 px-4 py-1.5 text-xs font-bold text-white hover:bg-zinc-800 transition text-center whitespace-nowrap"
-                >
-                  Simpan Perubahan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
