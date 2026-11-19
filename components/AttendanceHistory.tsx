@@ -240,13 +240,10 @@ ${item.log.obstacles}`;
           <div>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-zinc-900 shrink-0" />
-              <h2 className="text-lg sm:text-xl font-bold text-zinc-950">
-                Riwayat & Evaluasi Laporan
+              <h2 className="text-base sm:text-lg font-bold text-zinc-950">
+                Riwayat Laporan
               </h2>
             </div>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              Rangkuman seluruh presensi dan catatan evaluasi harian Anda
-            </p>
           </div>
 
           <button
@@ -262,11 +259,11 @@ ${item.log.obstacles}`;
         {/* Statistic Cards (Monochrome) */}
         <div className="mt-4 sm:mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
-            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Total Laporan</p>
+            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Total</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{totalCount}</p>
           </div>
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
-            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Disetujui Mentor</p>
+            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Disetujui</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{approvedCount}</p>
           </div>
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
@@ -274,7 +271,7 @@ ${item.log.obstacles}`;
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{pendingCount}</p>
           </div>
           <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
-            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Perlu Revisi</p>
+            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Revisi</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{revisionCount}</p>
           </div>
         </div>
@@ -448,7 +445,7 @@ ${item.log.obstacles}`;
                       <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
                         <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
                           <FileText className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>1. Uraian Aktivitas:</span>
+                          <span>Aktivitas:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
                           {log.activity_log || '-'}
@@ -459,7 +456,7 @@ ${item.log.obstacles}`;
                       <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
                         <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
                           <BookOpen className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>2. Pembelajaran:</span>
+                          <span>Pembelajaran:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
                           {log.lesson_learned || '-'}
@@ -470,7 +467,7 @@ ${item.log.obstacles}`;
                       <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
                         <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
                           <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>3. Kendala:</span>
+                          <span>Kendala:</span>
                         </div>
                         <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4">
                           {log.obstacles || '-'}
