@@ -1,5 +1,5 @@
 export interface MonevUser {
-  id: string;
+  id: string | number;
   name: string;
   email: string;
   role: string;
@@ -8,6 +8,15 @@ export interface MonevUser {
   internship_start_date?: string;
   internship_end_date?: string;
   mentor_name?: string;
+  institution_name?: string;
+  university?: string;
+  photo_url?: string;
+  participant_status?: string;
+  has_attendance_today?: boolean;
+  is_holiday_today?: boolean;
+  is_off_day_today?: boolean;
+  home?: any;
+  monthly_reports?: any[];
   [key: string]: any;
 }
 
@@ -22,8 +31,8 @@ export type LogApprovalState =
   | 'REJECTED';
 
 export interface DailyLog {
-  id?: string;
-  attendance_id?: string;
+  id?: string | number;
+  attendance_id?: string | number;
   date: string;
   activity_log: string;
   lesson_learned: string;
@@ -32,10 +41,11 @@ export interface DailyLog {
   reviewer_notes?: string | null;
   created_at?: string;
   updated_at?: string;
+  [key: string]: any;
 }
 
 export interface Attendance {
-  id: string;
+  id: string | number;
   date: string;
   status: AttendanceStatus;
   approval_status?: 'SUBMITTED' | 'APPROVED' | 'REJECTED';
@@ -45,6 +55,7 @@ export interface Attendance {
   log?: DailyLog | null;
   created_at?: string;
   updated_at?: string;
+  [key: string]: any;
 }
 
 export interface AttendanceSubmissionPayload {
@@ -56,7 +67,7 @@ export interface AttendanceSubmissionPayload {
   leave_reason?: string;
   latitude?: number;
   longitude?: number;
-  participant_id?: string;
+  participant_id?: string | number;
 }
 
 export interface UpdateDailyLogPayload {
