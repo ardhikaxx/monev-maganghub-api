@@ -167,7 +167,7 @@ Hasilkan JSON laporan resmi Kemnaker dengan 3 atribut: activity_log, lesson_lear
     return NextResponse.json({
       success: true,
       data: fallbackResult,
-      note: apiKey ? 'Generated via smart engine' : 'Generated via smart offline engine (masukkan API Key Gemini untuk hasil AI dinamis)',
+      note: 'Generated via smart engine',
     });
   } catch (error: any) {
     return NextResponse.json(
