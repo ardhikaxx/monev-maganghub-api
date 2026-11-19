@@ -7,8 +7,6 @@ import {
   MonevUser,
 } from '@/types/monev';
 import {
-  ACTIVITY_TEMPLATES,
-  ActivityTemplate,
   getTodayDateString,
   formatDateIndo,
 } from '@/lib/monev';
@@ -128,8 +126,8 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           prompt: quickPrompt.trim(),
           no_obstacles: noObstacles,
           custom_obstacle: noObstacles ? '' : customObstacle.trim(),
-          role: user?.position || 'Peserta Magang',
-          company: user?.company_name || 'Mitra Kemnaker',
+          role: user?.job_role || user?.position || 'Peserta Magang',
+          company: user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker',
         }),
       });
 
@@ -170,13 +168,6 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
       : status === 'ON_LEAVE'
       ? isLeaveReasonValid && isAgreed
       : isAgreed; // ABSENT
-
-  // Apply template
-  const applyTemplate = (tmpl: ActivityTemplate) => {
-    setActivityLog(tmpl.activity_log);
-    setLessonLearned(tmpl.lesson_learned);
-    setObstacles(tmpl.obstacles);
-  };
 
   const resetForm = () => {
     setQuickPrompt('');
@@ -445,26 +436,6 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                   <Sparkles className={`h-3.5 w-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
                   <span>{isGenerating ? 'Menyusun Laporan...' : 'Generate Laporan Otomatis'}</span>
                 </button>
-              </div>
-            </div>
-
-            {/* Template Cepat Draf Bawaan (Monochrome Chips) */}
-            <div className="rounded-xl border border-zinc-200 bg-white p-3">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-800 mb-2">
-                <FileText className="h-3.5 w-3.5 text-zinc-600 shrink-0" />
-                <span>Atau Pilih Draf Template Siap Pakai:</span>
-              </div>
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
-                {ACTIVITY_TEMPLATES.map((tmpl, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => applyTemplate(tmpl)}
-                    className="rounded-lg bg-zinc-100 hover:bg-zinc-950 hover:text-white px-2.5 py-1.5 text-[11px] font-semibold text-zinc-800 border border-zinc-200 transition shrink-0 active:scale-95"
-                  >
-                    {tmpl.title.split(' ')[0]} {tmpl.title.split(' ')[1]}...
-                  </button>
-                ))}
               </div>
             </div>
 
