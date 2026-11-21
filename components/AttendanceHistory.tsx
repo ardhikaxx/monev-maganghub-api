@@ -306,7 +306,7 @@ ${item.log.obstacles}`;
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header & Quick Summary */}
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm">
+      <div className="glass-card p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
@@ -320,35 +320,35 @@ ${item.log.obstacles}`;
           <button
             onClick={fetchAttendances}
             disabled={loading}
-            className="flex items-center justify-center gap-1.5 self-start sm:self-auto rounded-xl border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-800 hover:bg-zinc-100 transition"
+            className="flex items-center justify-center gap-1.5 self-start sm:self-auto rounded-xl glass-pill px-3.5 py-1.5 text-xs font-semibold text-zinc-800 hover:text-zinc-950 transition cursor-pointer"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin text-zinc-950' : ''}`} />
             <span>Muat Ulang</span>
           </button>
         </div>
 
-        {/* Statistic Cards (Monochrome) */}
+        {/* Statistic Cards (Glassmorphic) */}
         <div className="mt-4 sm:mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Total</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{totalCount}</p>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Disetujui</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{approvedCount}</p>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Menunggu</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{pendingCount}</p>
           </div>
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">Revisi</p>
             <p className="text-lg sm:text-xl font-bold text-zinc-950 mt-0.5">{revisionCount}</p>
           </div>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="mt-4 sm:mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-zinc-100 pt-3.5 sm:pt-4">
+        <div className="mt-4 sm:mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-zinc-200/60 pt-3.5 sm:pt-4">
           <div className="relative w-full sm:max-w-xs md:max-w-sm">
             <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-400" />
             <input
@@ -356,37 +356,37 @@ ${item.log.obstacles}`;
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari aktivitas atau tanggal..."
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 pl-8 sm:pl-9 pr-3.5 py-1.5 text-xs text-zinc-900 focus:border-zinc-950 focus:bg-white focus:outline-none"
+              className="w-full rounded-xl glass-input pl-8 sm:pl-9 pr-3.5 py-1.5 text-xs text-zinc-900 focus:outline-none"
             />
           </div>
 
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar whitespace-nowrap pb-1">
             <button
               onClick={() => setFilterStatus('ALL')}
-              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 ${
+              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 cursor-pointer ${
                 filterStatus === 'ALL'
-                  ? 'bg-zinc-950 text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  ? 'glass-dark text-white font-bold'
+                  : 'glass-pill text-zinc-700 hover:text-zinc-950'
               }`}
             >
               Semua ({totalCount})
             </button>
             <button
               onClick={() => setFilterStatus('APPROVED')}
-              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 ${
+              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 cursor-pointer ${
                 filterStatus === 'APPROVED'
-                  ? 'bg-zinc-950 text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  ? 'glass-dark text-white font-bold'
+                  : 'glass-pill text-zinc-700 hover:text-zinc-950'
               }`}
             >
               Disetujui ({approvedCount})
             </button>
             <button
               onClick={() => setFilterStatus('SUBMITTED')}
-              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 ${
+              className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 cursor-pointer ${
                 filterStatus === 'SUBMITTED'
-                  ? 'bg-zinc-950 text-white'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
+                  ? 'glass-dark text-white font-bold'
+                  : 'glass-pill text-zinc-700 hover:text-zinc-950'
               }`}
             >
               Menunggu ({pendingCount})
@@ -394,10 +394,10 @@ ${item.log.obstacles}`;
             {revisionCount > 0 && (
               <button
                 onClick={() => setFilterStatus('REVISION')}
-                className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 ${
+                className={`rounded-lg px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs font-semibold transition shrink-0 cursor-pointer ${
                   filterStatus === 'REVISION'
-                    ? 'bg-zinc-950 text-white'
-                    : 'bg-zinc-200 text-zinc-950 hover:bg-zinc-300'
+                    ? 'glass-dark text-white font-bold'
+                    : 'glass-pill text-zinc-950 hover:bg-zinc-200'
                 }`}
               >
                 Revisi ({revisionCount})
@@ -440,17 +440,17 @@ ${item.log.obstacles}`;
               <div
                 key={item.id}
                 onClick={() => setSelectedDetail(item)}
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border bg-white p-2.5 sm:p-3 text-left shadow-2xs transition-all hover:border-zinc-950 hover:shadow-md cursor-pointer select-none active:scale-[0.99] ${
+                className={`group relative flex flex-col justify-between overflow-hidden glass-card glass-card-hover p-2.5 sm:p-3 text-left cursor-pointer select-none active:scale-[0.98] ${
                   needsRevision
-                    ? 'border-zinc-400 ring-1 ring-zinc-400 bg-zinc-50/40'
-                    : 'border-zinc-200'
+                    ? 'ring-1 ring-amber-400/80'
+                    : ''
                 }`}
               >
                 {/* Bagian Atas Card: Tanggal & Badge Status */}
                 <div>
-                  <div className="flex items-center justify-between gap-1.5 border-b border-zinc-100 pb-2">
+                  <div className="flex items-center justify-between gap-1.5 border-b border-zinc-200/60 pb-2">
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 flex-col items-center justify-center rounded-lg bg-zinc-950 text-white shadow-2xs">
+                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 flex-col items-center justify-center rounded-lg glass-dark text-white shadow-xs">
                         <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase leading-none text-zinc-400">
                           {new Date(item.date).toLocaleString('id-ID', { month: 'short' })}
                         </span>
@@ -473,8 +473,8 @@ ${item.log.obstacles}`;
                   <div className="mt-2 flex items-center justify-between gap-1">
                     <div className="truncate">{renderStatusBadgeCompact(item)}</div>
                     {item.latitude && item.longitude && (
-                      <span className="inline-flex items-center gap-0.5 text-[8.5px] sm:text-[9px] text-zinc-600 font-mono bg-zinc-100 px-1 py-0.5 rounded border border-zinc-200 shrink-0">
-                        <MapPin className="h-2.5 w-2.5 text-zinc-700" />
+                      <span className="inline-flex items-center gap-0.5 text-[8.5px] sm:text-[9px] text-zinc-700 font-mono glass-pill px-1.5 py-0.5 rounded shrink-0">
+                        <MapPin className="h-2.5 w-2.5 text-zinc-800" />
                         GPS
                       </span>
                     )}
@@ -537,14 +537,14 @@ ${item.log.obstacles}`;
         </div>
       )}
 
-      {/* Modal Popup Detail Laporan Harian */}
+      {/* Modal Popup Detail Laporan Harian (Glassmorphic) */}
       {selectedDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/50 backdrop-blur-xs p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150">
-          <div className="w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl border border-zinc-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/40 backdrop-blur-md p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden glass-card shadow-2xl">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-3 sm:px-6 sm:py-4 shrink-0">
+            <div className="flex items-center justify-between border-b border-zinc-200/60 p-4 sm:px-6 sm:py-4 shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 flex-col items-center justify-center rounded-lg bg-zinc-950 text-white shadow-xs">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 flex-col items-center justify-center rounded-lg glass-dark text-white shadow-xs">
                   <span className="text-[8px] sm:text-[9px] font-bold uppercase leading-none text-zinc-400">
                     {new Date(selectedDetail.date).toLocaleString('id-ID', { month: 'short' })}
                   </span>
@@ -561,7 +561,7 @@ ${item.log.obstacles}`;
                       Status: <strong>{selectedDetail.status === 'PRESENT' ? 'Hadir' : selectedDetail.status === 'ON_LEAVE' ? 'Izin' : selectedDetail.status === 'DAYOFF' ? 'Hari Libur' : 'Alfa'}</strong>
                     </span>
                     {selectedDetail.latitude && selectedDetail.longitude && (
-                      <span className="text-[9px] font-mono text-zinc-500 bg-zinc-100 px-1 py-0.2 rounded border border-zinc-200">
+                      <span className="text-[9px] font-mono text-zinc-700 glass-pill px-1.5 py-0.5 rounded">
                         {selectedDetail.latitude.toFixed(4)}, {selectedDetail.longitude.toFixed(4)}
                       </span>
                     )}
@@ -574,7 +574,7 @@ ${item.log.obstacles}`;
                 <button
                   type="button"
                   onClick={() => setSelectedDetail(null)}
-                  className="rounded-lg p-1 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition"
+                  className="rounded-lg p-1 text-zinc-400 hover:text-zinc-700 hover:bg-white/40 transition cursor-pointer"
                   title="Tutup"
                 >
                   <X className="h-5 w-5" />
@@ -632,7 +632,7 @@ ${item.log.obstacles}`;
                   {selectedDetail.log ? (
                     <div className="space-y-3 text-xs">
                       {/* 1. Uraian Aktivitas */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                      <div className="rounded-xl glass-pill p-3 sm:p-3.5">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5 font-bold text-zinc-900">
                             <FileText className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
@@ -648,7 +648,7 @@ ${item.log.obstacles}`;
                       </div>
 
                       {/* 2. Pembelajaran */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                      <div className="rounded-xl glass-pill p-3 sm:p-3.5">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5 font-bold text-zinc-900">
                             <BookOpen className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
@@ -664,7 +664,7 @@ ${item.log.obstacles}`;
                       </div>
 
                       {/* 3. Kendala */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                      <div className="rounded-xl glass-pill p-3 sm:p-3.5">
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-1.5 font-bold text-zinc-900">
                             <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
