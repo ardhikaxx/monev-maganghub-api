@@ -44,17 +44,17 @@ export default function Navbar({
       {/* 1. DESKTOP / TABLET: FLOATING NAVBAR CAPSULE (hidden on mobile) */}
       {/* ========================================================= */}
       <header className="hidden sm:block fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-3 sm:px-6 pointer-events-none select-none">
-        <div className="pointer-events-auto flex items-center justify-between gap-2 lg:gap-4 rounded-full border border-zinc-200/80 bg-white/95 p-1.5 px-3 sm:px-4 shadow-sm backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center justify-between gap-2 lg:gap-4 rounded-full glass-card p-1.5 px-3 sm:px-4">
           {/* Left: Brand Logo & Title */}
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-950 text-white shadow-sm shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full glass-dark text-white shadow-sm shrink-0">
               <Shield className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs sm:text-sm font-bold tracking-tight text-zinc-950 whitespace-nowrap">
                 Monev MagangHub Assistant Agent
               </span>
-              <span className="hidden md:inline-flex rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-700 border border-zinc-200 shrink-0">
+              <span className="hidden md:inline-flex rounded-full glass-pill px-2 py-0.5 text-[10px] font-bold text-zinc-800 shrink-0">
                 Kemnaker
               </span>
             </div>
@@ -64,7 +64,7 @@ export default function Navbar({
           {user && (
             <nav
               aria-label="Navigasi Menu Desktop"
-              className="flex items-center gap-1 rounded-full bg-zinc-100/90 p-1 border border-zinc-200/70 shrink-0"
+              className="flex items-center gap-1 rounded-full bg-zinc-200/40 backdrop-blur-md p-1 border border-white/60 shrink-0"
             >
               {navItems.map((item) => {
                 const isActive = activeTab === item.key;
@@ -77,7 +77,7 @@ export default function Navbar({
                     onClick={() => onSelectTab?.(item.key)}
                     className={`flex items-center gap-1.5 rounded-full px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-xs font-semibold transition-all duration-300 ease-out cursor-pointer active:scale-95 ${
                       isActive
-                        ? 'bg-zinc-950 text-white shadow-xs font-bold scale-[1.02]'
+                        ? 'glass-dark text-white font-bold scale-[1.02] shadow-xs'
                         : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/70'
                     }`}
                   >
@@ -96,10 +96,10 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => onSelectTab?.('profile')}
-                className="flex items-center gap-2 rounded-full border border-zinc-200/80 bg-zinc-50/80 hover:bg-zinc-100/90 px-2.5 sm:px-3 py-1 text-left transition cursor-pointer max-w-[150px] lg:max-w-[210px]"
+                className="flex items-center gap-2 rounded-full glass-pill px-2.5 sm:px-3 py-1 text-left transition cursor-pointer max-w-[150px] lg:max-w-[210px]"
                 title="Buka Profil Peserta"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-200 text-zinc-800 text-[11px] font-bold shrink-0">
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-white text-[11px] font-bold shrink-0">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'P'}
                 </div>
                 <div className="min-w-0">
@@ -119,7 +119,7 @@ export default function Navbar({
                   onClick={onRefreshToken}
                   disabled={isRefreshing}
                   title="Perbarui Masa Aktif Token"
-                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-zinc-200/80 bg-white text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition shadow-xs disabled:opacity-40 cursor-pointer"
+                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full glass-pill text-zinc-700 hover:text-zinc-950 transition disabled:opacity-40 cursor-pointer"
                 >
                   <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin text-zinc-950' : ''}`} />
                 </button>
@@ -128,7 +128,7 @@ export default function Navbar({
                   type="button"
                   onClick={onLogout}
                   title="Keluar / Ganti Akun"
-                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full border border-zinc-200/80 bg-white text-zinc-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition shadow-xs cursor-pointer"
+                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full glass-pill text-zinc-700 hover:text-red-600 hover:border-red-300 transition cursor-pointer"
                 >
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
@@ -145,11 +145,11 @@ export default function Navbar({
       {/* ========================================================= */}
       {/* 2. MOBILE: TOP HEADER (hidden on desktop) */}
       {/* ========================================================= */}
-      <header className="sm:hidden sticky top-0 z-40 border-b border-zinc-200 bg-white/95 px-3 py-2.5 backdrop-blur-sm">
+      <header className="sm:hidden sticky top-0 z-40 glass-card rounded-none border-t-0 border-x-0 border-b border-white/70 px-3 py-2.5">
         <div className="flex items-center justify-between gap-2">
           {/* Brand */}
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-950 text-white shrink-0 shadow-sm">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg glass-dark text-white shrink-0 shadow-sm">
               <Shield className="h-3.5 w-3.5" />
             </div>
             <span className="text-xs font-bold tracking-tight text-zinc-950 truncate">
@@ -163,7 +163,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => onSelectTab?.('profile')}
-                className="flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-800 max-w-[110px] truncate hover:bg-zinc-200 transition cursor-pointer"
+                className="flex items-center gap-1 glass-pill rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-800 max-w-[110px] truncate transition cursor-pointer"
                 title="Buka Profil Peserta"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
@@ -175,7 +175,7 @@ export default function Navbar({
                 onClick={onRefreshToken}
                 disabled={isRefreshing}
                 title="Perbarui Masa Aktif Token"
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-100 transition shadow-xs disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-lg glass-pill text-zinc-700 transition disabled:opacity-40"
               >
                 <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin text-zinc-950' : ''}`} />
               </button>
@@ -184,7 +184,7 @@ export default function Navbar({
                 type="button"
                 onClick={onLogout}
                 title="Keluar"
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition shadow-xs"
+                className="flex h-7 w-7 items-center justify-center rounded-lg glass-pill text-zinc-700 hover:text-zinc-950 transition"
               >
                 <LogOut className="h-3 w-3" />
               </button>
