@@ -151,12 +151,12 @@ export default function ProfileTab({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* 1. Kartu Header Utama (Simple Flat Monochrome) */}
-      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-        {/* Solid Dark Banner */}
-        <div className="bg-zinc-950 px-4 py-4 sm:px-8 sm:py-6 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+      {/* 1. Kartu Header Utama (Glassmorphic) */}
+      <div className="overflow-hidden glass-card shadow-xl">
+        {/* Prismatic Dark Glass Banner */}
+        <div className="glass-dark px-4 py-5 sm:px-8 sm:py-6 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-zinc-800 text-sm sm:text-xl font-black text-white shrink-0 border border-zinc-700">
+            <div className="flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-white/10 text-sm sm:text-xl font-black text-white shrink-0 border border-white/20 shadow-xs">
               {initials}
             </div>
             <div className="min-w-0">
@@ -177,7 +177,7 @@ export default function ProfileTab({
               type="button"
               onClick={handleRefreshAll}
               disabled={isRefreshing}
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition disabled:opacity-50 text-center"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl glass-pill px-3 py-1.5 text-xs font-semibold text-zinc-800 hover:text-zinc-950 transition disabled:opacity-50 text-center cursor-pointer"
               title="Segarkan Data"
             >
               <RefreshCw className={`h-3.5 w-3.5 shrink-0 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -188,7 +188,7 @@ export default function ProfileTab({
               href="https://monev.maganghub.kemnaker.go.id/dashboard"
               target="_blank"
               rel="noreferrer"
-              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-zinc-950 hover:bg-zinc-100 transition text-center"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl glass-pill px-3 py-1.5 text-xs font-bold text-zinc-950 transition text-center"
             >
               <span>Portal Asli</span>
               <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
@@ -198,12 +198,12 @@ export default function ProfileTab({
 
         {/* Progress Periode Magang */}
         {displayStartDate && displayEndDate && (
-          <div className="border-t border-zinc-100 bg-zinc-50/70 px-4 py-3 sm:px-8 sm:py-3.5">
+          <div className="border-t border-zinc-200/60 p-4 sm:px-8 sm:py-4">
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs mb-2">
               <div className="flex items-center gap-2 font-bold text-zinc-900">
                 <Clock className="h-3.5 w-3.5 text-zinc-800 shrink-0" />
                 <span>Progres Magang:</span>
-                <span className="rounded bg-zinc-950 px-2 py-0.5 text-[11px] font-mono font-bold text-white">
+                <span className="rounded-full glass-dark px-2.5 py-0.5 text-[11px] font-mono font-bold text-white">
                   {progressPercent}%
                 </span>
               </div>
@@ -211,7 +211,7 @@ export default function ProfileTab({
                 Hari {daysPassed} / {daysTotal} ({daysRemaining} hari tersisa)
               </div>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-200">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-200/80">
               <div
                 className="h-full bg-zinc-950 transition-all duration-500 rounded-full"
                 style={{ width: `${progressPercent}%` }}
@@ -221,9 +221,9 @@ export default function ProfileTab({
         )}
       </div>
 
-      {/* 2. Kartu Resmi: Informasi Magang (Perusahaan, Posisi, Lokasi Posisi, Periode Magang) */}
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm space-y-3.5 sm:space-y-4">
-        <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+      {/* 2. Kartu Resmi: Informasi Magang (Glassmorphic) */}
+      <div className="glass-card p-4 sm:p-6 space-y-3.5 sm:space-y-4">
+        <div className="flex items-center justify-between border-b border-zinc-200/60 pb-3">
           <div className="flex items-center gap-2">
             <Briefcase className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-zinc-950 shrink-0" />
             <h2 className="text-sm sm:text-lg font-bold text-zinc-950">
@@ -232,8 +232,8 @@ export default function ProfileTab({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-bold text-zinc-900 border border-zinc-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-950" />
+            <span className="inline-flex items-center gap-1 rounded-full glass-pill px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-bold text-zinc-900">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               Aktif
             </span>
           </div>
@@ -242,7 +242,7 @@ export default function ProfileTab({
         {/* Grid 4 Elemen Pokok Resmi */}
         <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 pt-1">
           {/* 1. Perusahaan */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
               Perusahaan
             </span>
@@ -252,7 +252,7 @@ export default function ProfileTab({
           </div>
 
           {/* 2. Posisi */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
               Posisi
             </span>
@@ -262,7 +262,7 @@ export default function ProfileTab({
           </div>
 
           {/* 3. Lokasi Posisi */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
               Lokasi
             </span>
@@ -272,7 +272,7 @@ export default function ProfileTab({
           </div>
 
           {/* 4. Periode Magang */}
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+          <div className="rounded-xl glass-pill p-3 sm:p-3.5">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">
               Periode
             </span>
@@ -290,7 +290,7 @@ export default function ProfileTab({
         </div>
 
         {/* Rincian Tambahan: Mentor & Asal Institusi */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-zinc-100 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-zinc-200/60 text-xs">
           <div className="flex items-center gap-2">
             <UserCheck className="h-4 w-4 text-zinc-700 shrink-0" />
             <span className="text-zinc-500">Mentor:</span>
@@ -306,8 +306,8 @@ export default function ProfileTab({
       </div>
 
       {/* 3. Bagian Data Laporan Terakhir */}
-      <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6 shadow-sm space-y-3.5 sm:space-y-4">
-        <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+      <div className="glass-card p-4 sm:p-6 space-y-3.5 sm:space-y-4">
+        <div className="flex items-center justify-between border-b border-zinc-200/60 pb-3">
           <div className="flex items-center gap-2">
             <FileText className="h-4.5 w-4.5 text-zinc-950 shrink-0" />
             <h3 className="text-sm sm:text-base font-bold text-zinc-950">
@@ -346,7 +346,7 @@ export default function ProfileTab({
               return (
                 <div
                   key={item.id ? `profile-rep-${item.id}` : `profile-idx-${idx}`}
-                  className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-3 sm:p-4 space-y-2 sm:space-y-2.5 transition hover:border-zinc-300"
+                  className="rounded-xl glass-pill p-3 sm:p-4 space-y-2 sm:space-y-2.5 transition"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 border-b border-zinc-200/80 pb-2">
                     <div className="flex items-center gap-1.5 sm:gap-2">
