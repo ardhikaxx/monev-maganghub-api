@@ -171,7 +171,15 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 antialiased selection:bg-zinc-950 selection:text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-zinc-100/70 text-zinc-900 antialiased selection:bg-zinc-950 selection:text-white flex flex-col font-sans relative overflow-x-hidden">
+      {/* Ambient Prismatic Glow Mesh behind frosted glass */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
+        <div className="absolute -top-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-gradient-to-tr from-pink-300/20 via-indigo-300/15 to-sky-300/20 blur-3xl" />
+        <div className="absolute top-1/4 -right-40 w-[34rem] h-[34rem] rounded-full bg-gradient-to-br from-cyan-300/20 via-teal-200/15 to-purple-300/20 blur-3xl" />
+        <div className="absolute -bottom-40 left-1/4 w-[38rem] h-[38rem] rounded-full bg-gradient-to-tl from-emerald-200/15 via-sky-300/20 to-rose-200/15 blur-3xl" />
+        <div className="absolute inset-0 bg-zinc-50/40 backdrop-blur-[0.5px]" />
+      </div>
+
       <Navbar
         user={user}
         onLogout={handleLogout}
@@ -181,7 +189,7 @@ export default function Home() {
         onSelectTab={setActiveTab}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-3 sm:px-6 pt-4 sm:pt-28 md:pt-32 pb-24 sm:pb-16">
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-3 sm:px-6 pt-4 sm:pt-28 md:pt-32 pb-24 sm:pb-16">
         {!token ? (
           <div className="py-4 sm:py-10">
             <LoginCard
@@ -191,8 +199,8 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-4 sm:space-y-6">
-            {/* Top Greeting Bar (Clean Monochrome) */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-b border-zinc-200 pb-3">
+            {/* Top Greeting Bar (Prismatic Glassmorphism) */}
+            <div className="glass-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="text-base sm:text-xl font-black text-zinc-950 tracking-tight truncate">
                   Halo, {user?.name || 'Peserta Magang'}!
@@ -218,7 +226,7 @@ export default function Home() {
                 href="https://monev.maganghub.kemnaker.go.id/dashboard"
                 target="_blank"
                 rel="noreferrer"
-                className="self-start sm:self-auto inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-800 hover:text-zinc-950 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1 rounded-lg border border-zinc-200 transition shrink-0"
+                className="self-start sm:self-auto glass-pill inline-flex items-center gap-1.5 text-[11px] font-semibold text-zinc-800 hover:text-zinc-950 px-3 py-1.5 rounded-full transition shrink-0"
               >
                 <span>Portal Kemnaker</span>
                 <ExternalLink className="h-3 w-3" />
@@ -227,15 +235,15 @@ export default function Home() {
 
             {/* Banner Status Hari Ini jika Hari Libur / Off-Day */}
             {todayHolidayInfo && (
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-300 bg-white p-3 sm:p-4 text-xs text-zinc-900 shadow-xs">
+              <div className="glass-card p-4 sm:p-5 flex items-center justify-between gap-3 text-xs text-zinc-900">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-100 border border-zinc-300 text-zinc-900 shrink-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl glass-dark text-white shrink-0">
                     <Coffee className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5 font-bold text-zinc-950">
                       <span>Hari Ini: {todayHolidayInfo.name}</span>
-                      <span className="rounded-md border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-700">
+                      <span className="glass-pill rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-700">
                         {todayHolidayInfo.sourceLabel}
                       </span>
                     </div>
@@ -249,7 +257,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('form')}
-                    className="hidden sm:inline-flex items-center rounded-lg border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-800 shrink-0 transition"
+                    className="hidden sm:inline-flex items-center glass-pill rounded-full px-3.5 py-1.5 text-xs font-semibold text-zinc-800 hover:text-zinc-950 shrink-0 transition"
                   >
                     Tambah Laporan &rarr;
                   </button>
@@ -272,7 +280,7 @@ export default function Home() {
 
                   <div className="space-y-4 sm:space-y-5">
                     {/* Ringkasan Tips Pengisian */}
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="glass-card p-4 sm:p-5">
                       <div className="flex items-center gap-2 mb-2.5">
                         <Sparkles className="h-4 w-4 text-zinc-950 shrink-0" />
                         <h3 className="text-xs sm:text-sm font-bold text-zinc-950 uppercase tracking-wider">
@@ -296,7 +304,7 @@ export default function Home() {
                     </div>
 
                     {/* Riwayat Mini CTA */}
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="glass-card p-4 sm:p-5">
                       <h3 className="text-xs sm:text-sm font-bold text-zinc-950 uppercase tracking-wider mb-1">
                         Riwayat Laporan
                       </h3>
@@ -305,7 +313,7 @@ export default function Home() {
                       </p>
                       <button
                         onClick={() => setActiveTab('history')}
-                        className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-100 transition text-center"
+                        className="w-full rounded-xl glass-pill py-2.5 text-xs font-bold text-zinc-900 hover:text-zinc-950 transition text-center cursor-pointer"
                       >
                         Buka Riwayat &rarr;
                       </button>
@@ -331,21 +339,21 @@ export default function Home() {
 
               {/* Tab 4: Status Token */}
               {activeTab === 'token' && (
-                <div className="mx-auto max-w-2xl rounded-2xl border border-zinc-200 bg-white p-4 sm:p-8 shadow-sm space-y-5 sm:space-y-6">
+                <div className="mx-auto max-w-2xl glass-card p-5 sm:p-8 space-y-5 sm:space-y-6">
                   <div>
                     <h2 className="text-base sm:text-lg font-bold text-zinc-950">
                       Sesi & Token
                     </h2>
                   </div>
 
-                  <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 sm:p-4 space-y-2 text-xs">
-                    <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-zinc-200 gap-0.5 sm:gap-0">
+                  <div className="rounded-xl glass-pill p-3.5 sm:p-4 space-y-2 text-xs">
+                    <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-zinc-200/60 gap-0.5 sm:gap-0">
                       <span className="text-zinc-500">Masa Berlaku:</span>
                       <span className="font-semibold text-zinc-800">
                         {tokenExpiry || 'Tidak diketahui'}
                       </span>
                     </div>
-                    <div className="flex justify-between py-1 border-b border-zinc-200">
+                    <div className="flex justify-between py-1 border-b border-zinc-200/60">
                       <span className="text-zinc-500">Status Sesi:</span>
                       <span className="font-semibold text-zinc-950">Aktif (Auto-Refresh)</span>
                     </div>
@@ -365,7 +373,7 @@ export default function Home() {
                       rows={4}
                       readOnly
                       value={token}
-                      className="w-full rounded-xl border border-zinc-200 bg-zinc-50 p-3 font-mono text-xs text-zinc-600 focus:outline-none"
+                      className="w-full rounded-xl glass-input p-3 font-mono text-xs text-zinc-600 focus:outline-none"
                     />
                   </div>
 
@@ -373,7 +381,7 @@ export default function Home() {
                     <button
                       onClick={handleRefreshToken}
                       disabled={isRefreshing}
-                      className="flex items-center justify-center gap-1.5 rounded-xl bg-zinc-950 px-4 py-2.5 text-xs font-semibold text-white shadow hover:bg-zinc-800 disabled:opacity-50 transition w-full sm:w-auto"
+                      className="flex items-center justify-center gap-1.5 rounded-xl glass-dark px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-black disabled:opacity-50 transition w-full sm:w-auto cursor-pointer"
                     >
                       <Clock className="h-3.5 w-3.5" />
                       <span>{isRefreshing ? 'Memperbarui...' : 'Perpanjang Masa Aktif Token'}</span>
@@ -381,7 +389,7 @@ export default function Home() {
 
                     <button
                       onClick={handleLogout}
-                      className="rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-2.5 text-xs font-semibold text-zinc-800 hover:bg-zinc-200 transition w-full sm:w-auto text-center"
+                      className="rounded-xl glass-pill px-4 py-2.5 text-xs font-bold text-zinc-800 hover:text-red-600 transition w-full sm:w-auto text-center cursor-pointer"
                     >
                       Hapus Token & Keluar
                     </button>
