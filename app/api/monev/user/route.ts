@@ -181,6 +181,20 @@ export async function GET(req: NextRequest) {
       has_attendance_today: homeData?.has_attendance ?? rawUser?.has_attendance ?? false,
       is_holiday_today: homeData?.is_holiday ?? false,
       is_off_day_today: homeData?.is_scheduled_off_day ?? false,
+      holiday_today: homeData?.holiday ?? null,
+      off_days: homeData?.off_days || rawUser?.off_days || ['SATURDAY', 'SUNDAY'],
+      internship_location_province_code:
+        rawUser?.internship_location_province_code ||
+        homeData?.internship_location_province_code ||
+        '',
+      internship_location_regency_code:
+        rawUser?.internship_location_regency_code ||
+        homeData?.internship_location_regency_code ||
+        '',
+      internship_location_province_name:
+        rawUser?.internship_location_province_name ||
+        homeData?.internship_location_province_name ||
+        '',
     };
 
     return NextResponse.json({
