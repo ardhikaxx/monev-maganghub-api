@@ -1,3 +1,31 @@
+export interface HolidayItem {
+  id?: string | number;
+  name: string;
+  date: string;
+  type?: 'NATIONAL' | 'REGIONAL' | 'FORCE_MAJEURE' | string;
+  scope?: 'NATIONAL' | 'PROVINCE' | 'REGENCY' | string;
+  province_code?: string;
+  regency_code?: string;
+  justification?: string;
+  declaration_id?: string | number;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
+export interface HolidayInfo {
+  isHoliday: boolean;
+  isOffDay: boolean;
+  isToday: boolean;
+  date: string;
+  name: string;
+  type?: 'NATIONAL_HOLIDAY' | 'REGIONAL_HOLIDAY' | 'SCHEDULED_OFF_DAY' | null;
+  scopeLabel?: string;
+  sourceLabel: string;
+  description: string;
+  justification?: string;
+}
+
 export interface MonevUser {
   id: string | number;
   name: string;
@@ -11,6 +39,9 @@ export interface MonevUser {
   position?: string;
   internship_location_regency_name?: string;
   location?: string;
+  internship_location_province_code?: string;
+  internship_location_regency_code?: string;
+  internship_location_province_name?: string;
   internship_start_date?: string;
   internship_end_date?: string;
   internship_batch_name?: string;
@@ -23,6 +54,8 @@ export interface MonevUser {
   has_attendance_today?: boolean;
   is_holiday_today?: boolean;
   is_off_day_today?: boolean;
+  holiday_today?: HolidayItem | null;
+  off_days?: string[];
   home?: any;
   monthly_reports?: any[];
   [key: string]: any;
