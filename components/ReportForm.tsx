@@ -5,11 +5,14 @@ import {
   AttendanceStatus,
   AttendanceSubmissionPayload,
   MonevUser,
+  HolidayItem,
+  HolidayInfo,
 } from '@/types/monev';
 import {
   getTodayDateString,
   formatDateIndo,
 } from '@/lib/monev';
+import { getHolidayForDate } from '@/lib/holidays';
 import { POPULAR_CITIES, RegencyCity } from '@/lib/cities';
 import {
   Send,
@@ -25,6 +28,9 @@ import {
   ExternalLink,
   Shield,
   HelpCircle,
+  Coffee,
+  Calendar as CalendarIcon,
+  Info,
 } from 'lucide-react';
 
 interface ReportFormProps {
@@ -35,13 +41,17 @@ interface ReportFormProps {
 
 export default function ReportForm({ token, user, onSuccess }: ReportFormProps) {
   const formContainerRef = useRef<HTMLDivElement>(null);
-  const [date, setDate] = useState<string>(getTodayDateString());
+  const [date, setDate] = useState<string>('');
   const [status, setStatus] = useState<AttendanceStatus>('PRESENT');
   const [activityLog, setActivityLog] = useState('');
   const [lessonLearned, setLessonLearned] = useState('');
   const [obstacles, setObstacles] = useState('');
   const [leaveReason, setLeaveReason] = useState('');
   const [isAgreed, setIsAgreed] = useState(false);
+
+  useEffect(() => {
+    setDate(getTodayDateString());
+  }, []);
 
   // Quick AI Prompt states
   const [quickPrompt, setQuickPrompt] = useState('');
@@ -65,6 +75,10 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     type: 'success' | 'error' | 'info';
     message: string;
   } | null>(null);
+
+  // Holidays data states
+  const [holidays, setHolidays] = useState<HolidayItem[]>([]);
+  const [isLoadingHolidays, setIsLoadingHolidays] = useState(false);
 
   // Restore Location on mount
   useEffect(() => {
@@ -98,6 +112,40 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
     localStorage.setItem('monev-saved-coords', JSON.stringify(newCoord));
     setShowCityPicker(false);
   };
+
+  // Ambil daftar hari libur dari endpoint API Kemnaker / Monev MagangHub
+  useEffect(() => {
+    let isMounted = true;
+    const fetchHolidaysData = async () => {
+      setIsLoadingHolidays(true);
+      try {
+        const headers: Record<string, string> = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const res = await fetch('/api/monev/holidays', { headers });
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.data && Array.isArray(json.data) && isMounted) {
+            setHolidays(json.data);
+          }
+        }
+      } catch {
+        // Fallback ditangani otomatis oleh getHolidayForDate
+      } finally {
+        if (isMounted) setIsLoadingHolidays(false);
+      }
+    };
+
+    fetchHolidaysData();
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
+  // Evaluasi keterangan hari libur atau jadwal libur posisi untuk tanggal terpilih
+  const holidayInfo: HolidayInfo | null = React.useMemo(() => {
+    if (!date) return null;
+    return getHolidayForDate(date, holidays, user);
+  }, [date, holidays, user]);
 
   const filteredCities = POPULAR_CITIES.filter((c) =>
     c.name.toLowerCase().includes(citySearch.toLowerCase()) ||
@@ -365,36 +413,66 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-        {/* Tanggal & Status */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
-              Tanggal
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
-            />
+      {/* Jika Hari Libur: Tampilkan HANYA Keterangan Hari Libur Tanpa Ada Inputan Sama Sekali */}
+      {holidayInfo ? (
+        <div className="flex flex-col items-center justify-center text-center py-10 sm:py-16 px-4 rounded-2xl border border-zinc-200 bg-zinc-50/60">
+          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-white border border-zinc-300 text-zinc-950 shadow-sm mb-4">
+            {holidayInfo.isHoliday ? (
+              <CalendarIcon className="h-8 w-8 sm:h-10 sm:w-10 text-zinc-900" />
+            ) : (
+              <Coffee className="h-8 w-8 sm:h-10 sm:w-10 text-zinc-900" />
+            )}
           </div>
 
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
-              Status
-            </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as AttendanceStatus)}
-              className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm font-medium text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
-            >
-              <option value="PRESENT">Hadir</option>
-              <option value="ON_LEAVE">Izin / Sakit</option>
-              <option value="ABSENT">Alfa</option>
-            </select>
+          <h3 className="text-lg sm:text-2xl font-black text-zinc-950 max-w-md">
+            {holidayInfo.name}
+          </h3>
+
+          <p className="mt-2 text-xs sm:text-sm text-zinc-600 max-w-lg leading-relaxed font-medium">
+            {holidayInfo.description}
+          </p>
+
+          <div className="mt-5 max-w-md rounded-xl border border-zinc-200 bg-white p-3.5 sm:p-4 text-xs text-zinc-600 leading-relaxed text-left">
+            <p className="font-bold text-zinc-900 mb-1 flex items-center gap-1.5">
+              <Info className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
+              <span>Petunjuk Sistem Kemnaker:</span>
+            </p>
+            <p>
+              Pada hari libur, sistem MagangHub Kemnaker tidak membuka pengisian laporan kegiatan harian maupun presensi kehadiran. Anda dapat beristirahat hari ini tanpa perlu mengisi formulir laporan.
+            </p>
           </div>
         </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+          {/* Tanggal & Status */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <div>
+              <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
+                Tanggal
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-zinc-700">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as AttendanceStatus)}
+                className="w-full rounded-xl border border-zinc-300 bg-zinc-50/50 px-3.5 py-2 text-xs sm:text-sm font-medium text-zinc-900 transition focus:border-zinc-950 focus:bg-white focus:outline-none"
+              >
+                <option value="PRESENT">Hadir (PRESENT)</option>
+                <option value="ON_LEAVE">Izin / Sakit (ON_LEAVE)</option>
+                <option value="ABSENT">Alfa (ABSENT)</option>
+              </select>
+            </div>
+          </div>
 
         {/* Jika Hadir: Bagian Generator AI & 3 Textarea */}
         {status === 'PRESENT' && (
@@ -628,6 +706,19 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
 
 
 
+        {/* Jika Hari Libur: Keterangan DAYOFF */}
+        {status === 'DAYOFF' && (
+          <div className="rounded-xl border border-zinc-300 bg-zinc-50 p-4 sm:p-5 space-y-2">
+            <div className="flex items-center gap-2 text-zinc-950 font-bold text-xs sm:text-sm">
+              <Coffee className="h-4 w-4 text-zinc-900" />
+              <span>Presensi Hari Libur (DAYOFF)</span>
+            </div>
+            <p className="text-xs text-zinc-600 leading-relaxed">
+              Anda memilih status <strong>Hari Libur (DAYOFF)</strong>. Presensi akan dicatat sebagai libur dan Anda tidak perlu mengisi kolom uraian kegiatan, pembelajaran, maupun kendala.
+            </p>
+          </div>
+        )}
+
         {/* Jika Izin: Alasan */}
         {status === 'ON_LEAVE' && (
           <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 sm:p-5 space-y-3">
@@ -717,6 +808,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
           </button>
         </div>
       </form>
+      )}
     </div>
   );
 }
