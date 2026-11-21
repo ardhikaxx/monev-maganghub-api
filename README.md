@@ -1,4 +1,4 @@
-# Monev MagangHub Assistant (Kemnaker)
+# Monev MagangHub Assistant Agent (Kemnaker)
 
 Aplikasi web modern berbasis **Next.js (App Router)** & **Tailwind CSS** untuk membantu peserta magang MagangHub Kemnaker RI dalam mencatat presensi, menyusun laporan aktivitas harian dengan standar validasi minimal 100 karakter, memantau riwayat evaluasi mentor, serta memperbarui token sesi secara otomatis.
 
