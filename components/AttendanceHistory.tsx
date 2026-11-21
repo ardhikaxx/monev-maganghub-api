@@ -6,6 +6,7 @@ import { formatDateIndo } from '@/lib/monev';
 import {
   Calendar,
   Clock,
+  Coffee,
   CheckCircle2,
   AlertTriangle,
   XCircle,
@@ -34,6 +35,9 @@ export default function AttendanceHistory({ token }: AttendanceHistoryProps) {
   // Filter & Search states
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'APPROVED' | 'SUBMITTED' | 'REVISION' | 'LEAVE'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Detail modal popup state
+  const [selectedDetail, setSelectedDetail] = useState<Attendance | null>(null);
 
   // Revision modal state
   const [editingLog, setEditingLog] = useState<DailyLog | null>(null);
@@ -206,6 +210,15 @@ ${item.log.obstacles}`;
       );
     }
 
+    if (status === 'DAYOFF') {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-zinc-700 border border-zinc-300 shrink-0">
+          <Coffee className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+          Hari Libur
+        </span>
+      );
+    }
+
     if (status === 'ABSENT') {
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-zinc-600 border border-zinc-200 shrink-0">
@@ -227,6 +240,64 @@ ${item.log.obstacles}`;
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-zinc-700 border border-zinc-200 shrink-0">
         <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+        Menunggu
+      </span>
+    );
+  };
+
+  const renderStatusBadgeCompact = (attendance: Attendance) => {
+    const status = attendance.status;
+    const approval = attendance.approval_status;
+    const logState = attendance.log?.state;
+
+    if (logState === 'NEEDS_REVISION') {
+      return (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-200 px-1.5 py-0.5 text-[9px] font-bold text-zinc-950 border border-zinc-400 shrink-0">
+          <AlertTriangle className="h-2.5 w-2.5" />
+          Revisi
+        </span>
+      );
+    }
+
+    if (status === 'ON_LEAVE') {
+      return (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold text-zinc-700 border border-zinc-200 shrink-0">
+          <Clock className="h-2.5 w-2.5" />
+          Izin
+        </span>
+      );
+    }
+
+    if (status === 'DAYOFF') {
+      return (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold text-zinc-700 border border-zinc-300 shrink-0">
+          <Coffee className="h-2.5 w-2.5" />
+          Libur
+        </span>
+      );
+    }
+
+    if (status === 'ABSENT') {
+      return (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold text-zinc-600 border border-zinc-200 shrink-0">
+          <XCircle className="h-2.5 w-2.5" />
+          Alfa
+        </span>
+      );
+    }
+
+    if (approval === 'APPROVED') {
+      return (
+        <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-950 px-1.5 py-0.5 text-[9px] font-semibold text-white shrink-0">
+          <CheckCircle2 className="h-2.5 w-2.5" />
+          Disetujui
+        </span>
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center gap-0.5 rounded-full bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold text-zinc-700 border border-zinc-200 shrink-0">
+        <Clock className="h-2.5 w-2.5" />
         Menunggu
       </span>
     );
@@ -360,172 +431,317 @@ ${item.log.obstacles}`;
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3.5 sm:gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-5">
           {filteredAttendances.map((item) => {
             const log = item.log;
             const needsRevision = log?.state === 'NEEDS_REVISION';
-            const isCopied = copiedId === String(item.id);
 
             return (
               <div
                 key={item.id}
-                className={`flex flex-col justify-between overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:border-zinc-400 ${
-                  needsRevision ? 'border-zinc-400 ring-1 ring-zinc-400' : 'border-zinc-200'
+                onClick={() => setSelectedDetail(item)}
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border bg-white p-2.5 sm:p-3 text-left shadow-2xs transition-all hover:border-zinc-950 hover:shadow-md cursor-pointer select-none active:scale-[0.99] ${
+                  needsRevision
+                    ? 'border-zinc-400 ring-1 ring-zinc-400 bg-zinc-50/40'
+                    : 'border-zinc-200'
                 }`}
               >
-                {/* Card Top Header */}
-                <div className="border-b border-zinc-100 bg-zinc-50/70 p-3 sm:p-4">
-                  <div className="flex items-start justify-between gap-2 sm:gap-3">
-                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                      <div className="flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 flex-col items-center justify-center rounded-xl bg-zinc-950 text-white shadow-sm">
-                        <span className="text-[9px] sm:text-[10px] font-bold uppercase leading-none text-zinc-400">
+                {/* Bagian Atas Card: Tanggal & Badge Status */}
+                <div>
+                  <div className="flex items-center justify-between gap-1.5 border-b border-zinc-100 pb-2">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <div className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 flex-col items-center justify-center rounded-lg bg-zinc-950 text-white shadow-2xs">
+                        <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase leading-none text-zinc-400">
                           {new Date(item.date).toLocaleString('id-ID', { month: 'short' })}
                         </span>
-                        <span className="text-xs sm:text-base font-black leading-tight">
+                        <span className="text-xs sm:text-sm font-black leading-tight">
                           {new Date(item.date).getDate()}
                         </span>
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-xs sm:text-sm font-bold text-zinc-900 truncate">
-                          {formatDateIndo(item.date)}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5">
-                          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500">
-                            Status:{' '}
-                            <strong className="text-zinc-900">
-                              {item.status === 'PRESENT'
-                                ? 'Hadir'
-                                : item.status === 'ON_LEAVE'
-                                ? 'Izin'
-                                : 'Alfa'}
-                            </strong>
-                          </span>
-
-                          {item.latitude && item.longitude && (
-                            <span className="inline-flex items-center gap-0.5 text-[9px] sm:text-[10px] text-zinc-700 font-mono bg-zinc-100 px-1.5 py-0.5 rounded border border-zinc-200 shrink-0">
-                              <MapPin className="h-2.5 w-2.5 text-zinc-800" />
-                              GPS
-                            </span>
-                          )}
-                        </div>
+                        <p className="text-[10px] sm:text-[11px] font-bold text-zinc-900 truncate">
+                          {new Intl.DateTimeFormat('id-ID', { weekday: 'short' }).format(new Date(item.date))}, {new Date(item.date).getDate()} {new Date(item.date).toLocaleString('id-ID', { month: 'short' })}
+                        </p>
+                        <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 block font-mono">
+                          {new Date(item.date).getFullYear()}
+                        </span>
                       </div>
                     </div>
-
-                    <div className="shrink-0">{renderStatusBadge(item)}</div>
                   </div>
-                </div>
 
-                {/* Card Body Contents */}
-                <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3 flex-1">
-                  {/* Catatan Reviewer jika ada revisi */}
-                  {needsRevision && log?.reviewer_notes && (
-                    <div className="rounded-xl border border-zinc-300 bg-zinc-100 p-2.5 sm:p-3 text-xs text-zinc-900">
-                      <div className="flex items-center gap-1.5 font-bold text-zinc-950 mb-1">
-                        <AlertTriangle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                        <span>Catatan dari Mentor:</span>
-                      </div>
-                      <p className="leading-relaxed pl-3 sm:pl-4 font-medium">{log.reviewer_notes}</p>
-                    </div>
-                  )}
+                  {/* Status & GPS */}
+                  <div className="mt-2 flex items-center justify-between gap-1">
+                    <div className="truncate">{renderStatusBadgeCompact(item)}</div>
+                    {item.latitude && item.longitude && (
+                      <span className="inline-flex items-center gap-0.5 text-[8.5px] sm:text-[9px] text-zinc-600 font-mono bg-zinc-100 px-1 py-0.5 rounded border border-zinc-200 shrink-0">
+                        <MapPin className="h-2.5 w-2.5 text-zinc-700" />
+                        GPS
+                      </span>
+                    )}
+                  </div>
 
-                  {/* Jika Izin / Sakit */}
-                  {item.status === 'ON_LEAVE' && (
-                    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2.5 sm:p-3 text-xs">
-                      <p className="font-bold text-zinc-900 mb-1">Alasan Ketidakhadiran:</p>
-                      <p className="text-zinc-700 leading-relaxed">
-                        {item.leave_reason || 'Tidak ada catatan alasan.'}
+                  {/* Preview Konten Laporan */}
+                  {needsRevision && (
+                    <div className="mt-2 rounded-lg bg-zinc-100 border border-zinc-300 p-1.5 text-[9.5px] sm:text-[10px] text-zinc-900 leading-tight">
+                      <span className="font-bold flex items-center gap-1 text-zinc-950 mb-0.5">
+                        <AlertTriangle className="h-2.5 w-2.5 text-zinc-950 shrink-0" />
+                        Perlu Revisi
+                      </span>
+                      <p className="line-clamp-2 text-zinc-700">
+                        {log?.reviewer_notes || 'Catatan perbaikan mentor'}
                       </p>
                     </div>
                   )}
 
-                  {/* Jika Hadir: 3 Bagian Laporan Lengkap */}
-                  {item.status === 'PRESENT' && log ? (
-                    <div className="space-y-2 text-xs">
-                      {/* 1. Uraian Aktivitas */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
-                        <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
-                          <FileText className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>Aktivitas:</span>
-                        </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
-                          {log.activity_log || '-'}
-                        </p>
-                      </div>
-
-                      {/* 2. Pembelajaran */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
-                        <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
-                          <BookOpen className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>Pembelajaran:</span>
-                        </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
-                          {log.lesson_learned || '-'}
-                        </p>
-                      </div>
-
-                      {/* 3. Kendala */}
-                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-3">
-                        <div className="flex items-center gap-1.5 font-bold text-zinc-900 mb-1">
-                          <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
-                          <span>Kendala:</span>
-                        </div>
-                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-3 sm:pl-4">
-                          {log.obstacles || '-'}
-                        </p>
-                      </div>
-                    </div>
-                  ) : item.status === 'PRESENT' ? (
-                    <p className="text-xs italic text-zinc-400 py-1">
-                      Rincian teks laporan aktivitas tidak terdeteksi untuk kehadiran ini.
+                  {item.status === 'PRESENT' && log && (
+                    <p className="mt-2 text-[10px] sm:text-[11px] text-zinc-600 line-clamp-3 leading-relaxed">
+                      {log.activity_log || 'Aktivitas magang terisi.'}
                     </p>
-                  ) : null}
+                  )}
+
+                  {item.status === 'ON_LEAVE' && (
+                    <p className="mt-2 text-[10px] sm:text-[11px] text-zinc-500 line-clamp-2 italic leading-relaxed">
+                      Izin: {item.leave_reason || 'Tidak ada alasan khusus.'}
+                    </p>
+                  )}
+
+                  {item.status === 'DAYOFF' && (
+                    <p className="mt-2 text-[10px] sm:text-[11px] text-zinc-500 flex items-center gap-1 py-1">
+                      <Coffee className="h-3 w-3 text-zinc-400 shrink-0" />
+                      <span>Presensi Libur</span>
+                    </p>
+                  )}
+
+                  {item.status === 'ABSENT' && (
+                    <p className="mt-2 text-[10px] sm:text-[11px] text-zinc-400 italic py-1">
+                      Tidak hadir tanpa keterangan.
+                    </p>
+                  )}
                 </div>
 
-                {/* Card Bottom Footer */}
-                <div className="border-t border-zinc-100 bg-zinc-50/50 px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between gap-2">
-                  <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400 truncate max-w-[120px] sm:max-w-none">
-                    ID: {item.id ? String(item.id).slice(0, 8) : '-'}...
+                {/* Footer Mini Card */}
+                <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10px] sm:text-[11px]">
+                  <span className="font-semibold text-zinc-500 group-hover:text-zinc-950 transition flex items-center gap-1">
+                    <span>Detail</span>
+                    <span className="text-zinc-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                   </span>
-
-                  <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                    {item.log && (
-                      <button
-                        type="button"
-                        onClick={() => copyCardContent(item)}
-                        className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2 py-1 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold text-zinc-700 hover:bg-zinc-100 transition shadow-sm active:scale-95"
-                        title="Salin Isi Laporan"
-                      >
-                        {isCopied ? (
-                          <>
-                            <Check className="h-3 w-3 text-zinc-950" />
-                            <span className="text-zinc-950">Tersalin</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-3 w-3" />
-                            <span>Salin</span>
-                          </>
-                        )}
-                      </button>
-                    )}
-
-                    {needsRevision && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (log) openRevisionModal(log);
-                        }}
-                        className="flex items-center gap-1 rounded-lg bg-zinc-950 px-2.5 py-1 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-semibold text-white shadow-sm hover:bg-zinc-800 transition active:scale-95"
-                      >
-                        <FileEdit className="h-3.5 w-3.5" />
-                        <span>Perbaiki</span>
-                      </button>
-                    )}
-                  </div>
+                  {log && (
+                    <span className="text-[8.5px] sm:text-[9.5px] text-zinc-400 font-mono">
+                      {[log.activity_log, log.lesson_learned, log.obstacles].filter(Boolean).length}/3 bag
+                    </span>
+                  )}
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal Popup Detail Laporan Harian */}
+      {selectedDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/50 backdrop-blur-xs p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-150">
+          <div className="w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl border border-zinc-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-4 py-3 sm:px-6 sm:py-4 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 flex-col items-center justify-center rounded-lg bg-zinc-950 text-white shadow-xs">
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase leading-none text-zinc-400">
+                    {new Date(selectedDetail.date).toLocaleString('id-ID', { month: 'short' })}
+                  </span>
+                  <span className="text-xs sm:text-sm font-black leading-tight">
+                    {new Date(selectedDetail.date).getDate()}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-bold text-xs sm:text-base text-zinc-950 truncate">
+                    {formatDateIndo(selectedDetail.date)}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] text-zinc-500">
+                      Status: <strong>{selectedDetail.status === 'PRESENT' ? 'Hadir' : selectedDetail.status === 'ON_LEAVE' ? 'Izin' : selectedDetail.status === 'DAYOFF' ? 'Hari Libur' : 'Alfa'}</strong>
+                    </span>
+                    {selectedDetail.latitude && selectedDetail.longitude && (
+                      <span className="text-[9px] font-mono text-zinc-500 bg-zinc-100 px-1 py-0.2 rounded border border-zinc-200">
+                        {selectedDetail.latitude.toFixed(4)}, {selectedDetail.longitude.toFixed(4)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                {renderStatusBadge(selectedDetail)}
+                <button
+                  type="button"
+                  onClick={() => setSelectedDetail(null)}
+                  className="rounded-lg p-1 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition"
+                  title="Tutup"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 sm:space-y-4">
+              {/* Catatan Reviewer Mentor jika ada */}
+              {selectedDetail.log?.state === 'NEEDS_REVISION' && selectedDetail.log?.reviewer_notes && (
+                <div className="rounded-xl border border-zinc-300 bg-zinc-100 p-3 sm:p-4 text-xs text-zinc-900">
+                  <div className="flex items-center gap-1.5 font-bold text-zinc-950 mb-1">
+                    <AlertTriangle className="h-4 w-4 text-zinc-800 shrink-0" />
+                    <span>Catatan Perbaikan dari Mentor:</span>
+                  </div>
+                  <p className="leading-relaxed pl-5 font-medium">{selectedDetail.log.reviewer_notes}</p>
+                </div>
+              )}
+
+              {/* Status ON_LEAVE */}
+              {selectedDetail.status === 'ON_LEAVE' && (
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 sm:p-4 text-xs">
+                  <p className="font-bold text-zinc-900 mb-1">Alasan Ketidakhadiran:</p>
+                  <p className="text-zinc-700 leading-relaxed whitespace-pre-line">
+                    {selectedDetail.leave_reason || 'Tidak ada catatan alasan.'}
+                  </p>
+                </div>
+              )}
+
+              {/* Status DAYOFF */}
+              {selectedDetail.status === 'DAYOFF' && (
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 sm:p-4 text-xs space-y-1">
+                  <div className="flex items-center gap-2 text-zinc-950 font-bold">
+                    <Coffee className="h-4 w-4 text-zinc-800" />
+                    <span>Presensi Hari Libur</span>
+                  </div>
+                  <p className="text-zinc-600 leading-relaxed">
+                    Tanggal ini dicatat sebagai presensi hari libur resmi/posisi. Pengisian uraian aktivitas tidak diperlukan.
+                  </p>
+                </div>
+              )}
+
+              {/* Status ABSENT */}
+              {selectedDetail.status === 'ABSENT' && (
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 sm:p-4 text-xs">
+                  <p className="font-bold text-zinc-900">Tidak Hadir Tanpa Keterangan (Alfa)</p>
+                  <p className="text-zinc-500 mt-1">Presensi tidak diisi pada tanggal ini.</p>
+                </div>
+              )}
+
+              {/* Status PRESENT: 3 Uraian Laporan Lengkap */}
+              {selectedDetail.status === 'PRESENT' && (
+                <>
+                  {selectedDetail.log ? (
+                    <div className="space-y-3 text-xs">
+                      {/* 1. Uraian Aktivitas */}
+                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-1.5 font-bold text-zinc-900">
+                            <FileText className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
+                            <span>1. Uraian Aktivitas</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-zinc-400">
+                            {selectedDetail.log.activity_log?.length || 0} kar
+                          </span>
+                        </div>
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4 text-xs sm:text-sm">
+                          {selectedDetail.log.activity_log || '-'}
+                        </p>
+                      </div>
+
+                      {/* 2. Pembelajaran */}
+                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-1.5 font-bold text-zinc-900">
+                            <BookOpen className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
+                            <span>2. Capaian Pembelajaran</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-zinc-400">
+                            {selectedDetail.log.lesson_learned?.length || 0} kar
+                          </span>
+                        </div>
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4 text-xs sm:text-sm">
+                          {selectedDetail.log.lesson_learned || '-'}
+                        </p>
+                      </div>
+
+                      {/* 3. Kendala */}
+                      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-3.5">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-1.5 font-bold text-zinc-900">
+                            <AlertCircle className="h-3.5 w-3.5 text-zinc-700 shrink-0" />
+                            <span>3. Kendala & Hambatan</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-zinc-400">
+                            {selectedDetail.log.obstacles?.length || 0} kar
+                          </span>
+                        </div>
+                        <p className="text-zinc-700 leading-relaxed whitespace-pre-line pl-4 text-xs sm:text-sm">
+                          {selectedDetail.log.obstacles || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed border-zinc-200 p-4 text-center text-xs text-zinc-400">
+                      Rincian teks laporan aktivitas tidak terdeteksi untuk entri kehadiran ini.
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-zinc-100 bg-zinc-50 px-4 py-3 sm:px-6 sm:py-3.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-zinc-400">
+                ID: {selectedDetail.id ? String(selectedDetail.id).slice(0, 12) : '-'}...
+              </span>
+
+              <div className="flex items-center gap-2">
+                {selectedDetail.log && (
+                  <button
+                    type="button"
+                    onClick={() => copyCardContent(selectedDetail)}
+                    className="flex items-center gap-1 rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 transition shadow-xs"
+                  >
+                    {copiedId === String(selectedDetail.id) ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-zinc-950" />
+                        <span className="text-zinc-950">Tersalin</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span>Salin Teks</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {selectedDetail.log?.state === 'NEEDS_REVISION' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (selectedDetail.log) {
+                        const targetLog = selectedDetail.log;
+                        setSelectedDetail(null);
+                        openRevisionModal(targetLog);
+                      }
+                    }}
+                    className="flex items-center gap-1 rounded-xl bg-zinc-950 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-zinc-800 transition"
+                  >
+                    <FileEdit className="h-3.5 w-3.5" />
+                    <span>Perbaiki Sekarang</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedDetail(null)}
+                  className="rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-600 hover:bg-zinc-100 transition"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
