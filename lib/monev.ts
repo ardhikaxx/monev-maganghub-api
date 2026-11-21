@@ -1,5 +1,5 @@
 export const MONEV_API_BASE_URL = 'https://monev-api.maganghub.kemnaker.go.id/api/v1';
-export const DEFAULT_FRONTEND_BUILD_ID = 'b4acc98eed72703c955aa9ef30434dd13672f55c-production';
+export const DEFAULT_FRONTEND_BUILD_ID = '5f0bba0a4407afb1f65eacbf1306c9c072b5bac9-production';
 
 export interface ActivityTemplate {
   title: string;
