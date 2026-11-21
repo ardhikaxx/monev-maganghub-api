@@ -181,7 +181,7 @@ export default function Home() {
         onSelectTab={setActiveTab}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-4 sm:px-6 sm:py-6 pt-4 sm:pt-20 pb-24 sm:pb-12">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-3 sm:px-6 pt-4 sm:pt-28 md:pt-32 pb-24 sm:pb-16">
         {!token ? (
           <div className="py-4 sm:py-10">
             <LoginCard
