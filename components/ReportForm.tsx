@@ -477,15 +477,15 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
         {/* Jika Hadir: Bagian Generator AI & 3 Textarea */}
         {status === 'PRESENT' && (
           <div className="space-y-3 sm:space-y-4 rounded-2xl border border-zinc-200 bg-zinc-50/60 p-2.5 sm:p-4 md:p-5">
-            {/* FITUR 1: Generator AI Cepat & Checkbox Tidak Ada Kendala */}
+            {/* FITUR 1: AI Assistant Agent & Checkbox Tidak Ada Kendala */}
             <div className="rounded-xl border border-zinc-300 bg-white p-3 sm:p-4 shadow-sm space-y-2.5 sm:space-y-3">
               <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 border-b border-zinc-100 pb-2">
                 <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-zinc-950">
                   <Sparkles className="h-4 w-4 text-zinc-900 shrink-0" />
-                  <span>Generate Otomatis (AI)</span>
+                  <span>AI Assistant Agent (Generate Laporan)</span>
                 </div>
                 <span className="text-[10px] sm:text-[11px] text-zinc-500 font-medium self-start xs:self-auto">
-                  Format: Padat & Ringkas (min. 100 kar)
+                  Aktivitas, Pembelajaran & Kendala (min. 100 kar)
                 </span>
               </div>
 
@@ -542,7 +542,7 @@ export default function ReportForm({ token, user, onSuccess }: ReportFormProps) 
                   className="flex items-center justify-center gap-2 rounded-xl bg-zinc-950 hover:bg-zinc-800 disabled:opacity-40 text-white px-4 py-2 text-xs font-bold transition shadow-sm w-full sm:w-auto"
                 >
                   <Sparkles className={`h-3.5 w-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
-                  <span>{isGenerating ? 'Menyusun...' : 'Generate Laporan'}</span>
+                  <span>{isGenerating ? 'Menyusun via AI Agent...' : 'Susun Laporan via AI Agent'}</span>
                 </button>
               </div>
             </div>
