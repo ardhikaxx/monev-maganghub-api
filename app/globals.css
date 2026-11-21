@@ -53,3 +53,129 @@ nextjs-portal,
   animation: tabFadeIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity;
 }
+
+/* ========================================================= */
+/* GLASSMORPHISM & PRISMATIC REFRACTION UI SYSTEM            */
+/* ========================================================= */
+
+/* Glass Card with Prismatic Rainbow Sheen Border */
+.glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  border-radius: 1.25rem;
+}
+
+/* Pseudo-element for Specular Iridescent Prism Reflection Border */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(244, 114, 182, 0.22) 20%,
+    rgba(56, 189, 248, 0.25) 45%,
+    rgba(52, 211, 153, 0.22) 70%,
+    rgba(251, 191, 36, 0.2) 85%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Glass Interactive Hover */
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.09),
+    0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+}
+.glass-card-hover:hover::before {
+  opacity: 1;
+}
+
+/* Dark Glass Container (for black monochrome contrast & bottom nav) */
+.glass-dark {
+  position: relative;
+  background: rgba(9, 9, 11, 0.88);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 20px 45px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.glass-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(244, 114, 182, 0.3) 25%,
+    rgba(56, 189, 248, 0.35) 50%,
+    rgba(52, 211, 153, 0.3) 75%,
+    rgba(255, 255, 255, 0.35) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Glass Inputs & Form Controls */
+.glass-input {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(228, 228, 231, 0.85);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(9, 9, 11, 0.9);
+  box-shadow: 
+    0 0 0 3px rgba(9, 9, 11, 0.07),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+/* Glass Subtle Pill / Badge / Action Button */
+.glass-pill {
+  position: relative;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 2px 8px -1px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-pill:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 4px 12px -2px rgba(0, 0, 0, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
