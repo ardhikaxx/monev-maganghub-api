@@ -29,7 +29,7 @@ export default function BottomNav({ activeTab, onSelectTab }: BottomNavProps) {
       aria-label="Navigasi Bawah Mobile"
       className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 sm:hidden select-none"
     >
-      <div className="flex h-12 items-center gap-1.5 rounded-full border border-zinc-800/80 bg-zinc-950/95 p-1 shadow-md shadow-zinc-950/20 ring-1 ring-white/10 backdrop-blur-md">
+      <div className="flex h-13 items-center gap-1.5 rounded-full glass-dark p-1.5 shadow-2xl">
         {navItems.map((item) => {
           const isActive = activeTab === item.key;
           const Icon = item.icon;
@@ -42,8 +42,8 @@ export default function BottomNav({ activeTab, onSelectTab }: BottomNavProps) {
               aria-label={item.label}
               className={`relative flex h-full items-center justify-center rounded-full transition-all duration-300 ease-out active:scale-95 cursor-pointer overflow-hidden ${
                 isActive
-                  ? 'bg-white px-3.5 text-zinc-950 shadow-xs font-bold'
-                  : 'w-10 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60'
+                  ? 'glass-card px-4 text-zinc-950 shadow-sm font-bold'
+                  : 'w-11 text-zinc-400 hover:text-white hover:bg-white/10'
               }`}
             >
               <Icon className="h-4 w-4 shrink-0 transition-transform duration-200" />
