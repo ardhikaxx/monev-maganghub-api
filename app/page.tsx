@@ -12,27 +12,32 @@ import { parseJwt, formatDateIndo, getTodayDateString } from '@/lib/monev';
 import { getHolidayForDate } from '@/lib/holidays';
 import {
   Building2,
-  Clock,
-  Sparkles,
-  ExternalLink,
   Coffee,
   Key,
   RefreshCw,
   LogOut,
+  ExternalLink,
+  CheckCircle2,
+  Copy,
 } from 'lucide-react';
 
 export default function Home() {
-  const [token, setToken]               = useState<string | null>(null);
-  const [user, setUser]                 = useState<MonevUser | null>(null);
+  const [token, setToken]                 = useState<string | null>(null);
+  const [user, setUser]                   = useState<MonevUser | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(false);
   const [isRefreshing, setIsRefreshing]   = useState(false);
   const [activeTab, setActiveTab]         = useState<'form' | 'history' | 'profile' | 'token'>('form');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [copiedToken, setCopiedToken]     = useState(false);
 
-  /* ---- Restore token ---- */
+  /* ---- Restore saved token on mount ---- */
   useEffect(() => {
-    const savedToken = localStorage.getItem('monev-auth-token');
-    if (savedToken) validateAndSetToken(savedToken);
+    try {
+      const savedToken = localStorage.getItem('monev-auth-token');
+      if (savedToken) {
+        validateAndSetToken(savedToken);
+      }
+    } catch {}
   }, []);
 
   /* ---- Validate & set token ---- */
@@ -79,7 +84,7 @@ export default function Home() {
     }
   };
 
-  /* ---- Background auto-refresh ---- */
+  /* ---- Background auto-refresh (15 min interval) ---- */
   useEffect(() => {
     if (!token) return;
     const checkAndAutoRefreshToken = async () => {
@@ -132,9 +137,16 @@ export default function Home() {
     }
   };
 
+  const copyJwt = () => {
+    if (!token) return;
+    navigator.clipboard.writeText(token);
+    setCopiedToken(true);
+    setTimeout(() => setCopiedToken(false), 2000);
+  };
+
   const tokenPayload = token ? parseJwt(token) : null;
   const tokenExpiry  = tokenPayload?.exp
-    ? new Date(tokenPayload.exp * 1000).toLocaleString('id-ID')
+    ? new Date(tokenPayload.exp * 1000).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'medium' })
     : null;
 
   const [todayHolidayInfo, setTodayHolidayInfo] = useState<any>(null);
@@ -143,169 +155,117 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div
-      className="min-h-screen text-zinc-900 antialiased selection:bg-zinc-950 selection:text-white flex flex-col font-sans relative overflow-x-hidden"
-      style={{ background: 'var(--bg-surface-light)' }}
-    >
+    <div className="min-h-screen bg-white text-[#171717] antialiased flex flex-col font-sans">
 
-      {/* ============================================================
-          AMBIENT PRISMATIC BACKGROUND SYSTEM
-          ============================================================ */}
-      <div className="ambient-bg" aria-hidden="true">
-        {/* Large ambient orbs */}
-        <div
-          className="ambient-orb"
-          style={{
-            width: '38rem', height: '38rem',
-            top: '-14rem', left: '-10rem',
-            background: 'radial-gradient(ellipse, rgba(220,215,255,0.28) 0%, rgba(240,210,250,0.18) 40%, transparent 70%)',
-          }}
+      {/* ---- Floating Navigation Bar (Only for Authenticated Users) ---- */}
+      {token && (
+        <Navbar
+          user={user}
+          onLogout={handleLogout}
+          onRefreshToken={handleRefreshToken}
+          isRefreshing={isRefreshing}
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
         />
-        <div
-          className="ambient-orb"
-          style={{
-            width: '44rem', height: '44rem',
-            top: '18%', right: '-14rem',
-            background: 'radial-gradient(ellipse, rgba(200,235,255,0.26) 0%, rgba(210,250,240,0.16) 40%, transparent 70%)',
-          }}
-        />
-        <div
-          className="ambient-orb"
-          style={{
-            width: '50rem', height: '50rem',
-            bottom: '-18rem', left: '20%',
-            background: 'radial-gradient(ellipse, rgba(255,230,235,0.22) 0%, rgba(220,215,255,0.14) 40%, transparent 70%)',
-          }}
-        />
-        <div
-          className="ambient-orb"
-          style={{
-            width: '32rem', height: '32rem',
-            top: '50%', left: '40%',
-            background: 'radial-gradient(ellipse, rgba(230,250,230,0.18) 0%, rgba(255,245,200,0.12) 40%, transparent 70%)',
-          }}
-        />
+      )}
 
-        {/* Subtle noise texture */}
-        <div className="ambient-noise" />
-
-        {/* Light base wash */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'rgba(250,250,251,0.35)',
-            backdropFilter: 'blur(0.5px)',
-          }}
-        />
-      </div>
-
-      {/* ---- Navbar ---- */}
-      <Navbar
-        user={user}
-        onLogout={handleLogout}
-        onRefreshToken={handleRefreshToken}
-        isRefreshing={isRefreshing}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-      />
-
-      {/* ---- Main Content ---- */}
+      {/* ---- Main Application Viewport ---- */}
       <main
-        className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-3 sm:px-6 pt-4 sm:pt-28 md:pt-32 pb-28 sm:pb-16"
+        className={`mx-auto w-full max-w-7xl flex-1 px-3.5 sm:px-6 ${
+          token
+            ? 'pt-2 sm:pt-3 pb-28 sm:pb-14'
+            : 'min-h-screen flex items-center justify-center py-10'
+        }`}
       >
-
-        {/* ========== NOT LOGGED IN ========== */}
+        {/* ============================================================
+            VIEW A: NOT AUTHENTICATED (LOGIN VIEW ONLY)
+            ============================================================ */}
         {!token ? (
-          <div className="py-6 sm:py-12">
-            {/* Hero text above login card */}
-            <div className="text-center mb-8 sm:mb-10 animate-liquid-in">
-              <div
-                className="inline-flex items-center gap-2 rounded-full glass-pill px-4 py-1.5 text-xs font-semibold text-zinc-700 mb-4"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-zinc-700" />
-                <span>AI-Powered Attendance Assistant</span>
-              </div>
-              <h1 className="text-2xl sm:text-4xl font-black text-zinc-950 tracking-tight leading-tight">
-                Monev MagangHub<br />
-                <span className="text-zinc-500 font-medium text-xl sm:text-3xl">Assistant Agent</span>
-              </h1>
-              <p className="mt-3 text-sm text-zinc-500 max-w-md mx-auto leading-relaxed">
-                Permudah pengisian absensi &amp; laporan aktivitas harian magang Kemnaker dengan bantuan AI.
-              </p>
-            </div>
-
+          <div className="w-full">
             <LoginCard onLoginWithToken={validateAndSetToken} isLoading={isLoadingAuth} />
           </div>
 
         ) : (
-          /* ========== LOGGED IN ========== */
-          <div className="space-y-4 sm:space-y-5">
+          /* ============================================================
+              VIEW B: AUTHENTICATED (DASHBOARD & TAB ECOSYSTEM)
+              ============================================================ */
+          <div className="space-y-6">
 
-            {/* ---- Greeting Bar ---- */}
-            <div className="glass-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-liquid-in">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <div
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black text-white shrink-0"
-                    style={{
-                      background: 'linear-gradient(135deg, #18181b, #3f3f46)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                    }}
-                  >
-                    {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
-                  </div>
-                  <h1 className="text-sm sm:text-lg font-black text-zinc-950 tracking-tight truncate">
-                    Halo, {user?.name?.split(' ')[0] || 'Peserta'}!
-                  </h1>
+            {/* ---- Greeting Banner ---- */}
+            <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-xs">
+              <div className="flex items-center gap-3.5 min-w-0">
+                {/* User Initial */}
+                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-lg bg-[#171717] text-white text-sm sm:text-base font-bold shrink-0">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'P'}
                 </div>
-                <div className="text-[11px] sm:text-xs text-zinc-500 flex flex-wrap items-center gap-x-2 gap-y-0.5 ml-9">
-                  <span className="flex items-center gap-1 font-medium text-zinc-700">
-                    <Building2 className="h-3 w-3 text-zinc-400 shrink-0" />
-                    <span className="truncate max-w-[180px] sm:max-w-none">
-                      {user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker'}
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-base sm:text-lg font-bold text-[#171717] truncate">
+                      Selamat Datang, {user?.name?.split(' ')[0] || 'Peserta'}!
+                    </h1>
+                    <span className="hidden sm:inline-flex items-center rounded-full bg-[#F8F9FA] border border-[#E5E7EB] px-2.5 py-0.5 text-[11px] font-medium text-[#737373]">
+                      Peserta Aktif
                     </span>
-                  </span>
-                  {user?.internship_start_date && (
-                    <>
-                      <span className="text-zinc-200 hidden sm:inline">&bull;</span>
-                      <span className="text-zinc-500">
-                        {formatDateIndo(user.internship_start_date)} –{' '}
-                        {user.internship_end_date ? formatDateIndo(user.internship_end_date) : 'Selesai'}
+                  </div>
+                  <div className="text-xs text-[#737373] flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-0.5">
+                    <span className="flex items-center gap-1 font-medium text-[#171717]">
+                      <Building2 className="h-3.5 w-3.5 text-[#737373] shrink-0" />
+                      <span className="truncate max-w-[200px] sm:max-w-none">
+                        {user?.internship_company || user?.company || user?.company_name || 'Mitra Kemnaker RI'}
                       </span>
-                    </>
-                  )}
+                    </span>
+                    {user?.internship_start_date && (
+                      <>
+                        <span className="text-[#E5E7EB] hidden sm:inline">&bull;</span>
+                        <span className="text-[#737373]">
+                          {formatDateIndo(user.internship_start_date)} –{' '}
+                          {user.internship_end_date ? formatDateIndo(user.internship_end_date) : 'Selesai'}
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <a
-                href="https://monev.maganghub.kemnaker.go.id/dashboard"
-                target="_blank"
-                rel="noreferrer"
-                className="self-start sm:self-auto glass-pill inline-flex items-center gap-1.5 text-[11px] font-semibold text-zinc-800 hover:text-zinc-950 px-3.5 py-1.5 rounded-full transition shrink-0 cursor-pointer"
-              >
-                <span>Portal Kemnaker</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
+              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                <a
+                  href="https://monev.maganghub.kemnaker.go.id/dashboard"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white hover:bg-[#F8F9FA] border border-[#E5E7EB] px-3 py-1.5 text-xs font-medium text-[#171717] transition cursor-pointer"
+                >
+                  <span>Portal Kemnaker</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-[#737373]" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  title="Ganti Akun / Keluar"
+                  className="inline-flex items-center gap-1 rounded-lg bg-white hover:bg-red-50 border border-[#E5E7EB] hover:border-red-200 px-3 py-1.5 text-xs font-medium text-[#737373] hover:text-red-600 transition cursor-pointer"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Ganti Akun</span>
+                </button>
+              </div>
             </div>
 
-            {/* ---- Holiday Banner ---- */}
+            {/* ---- Holiday Announcement Banner (If applicable) ---- */}
             {todayHolidayInfo && (
-              <div className="glass-card p-4 sm:p-5 flex items-center justify-between gap-3 text-xs text-zinc-900 animate-liquid-in">
+              <div className="bg-[#F8F9FA] border border-[#E5E7EB] rounded-xl p-4 flex items-center justify-between gap-3 text-xs text-[#171717]">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl glass-dark shrink-0"
-                  >
-                    <Coffee className="h-4 w-4 text-white" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white border border-[#E5E7EB] shrink-0 text-[#171717]">
+                    <Coffee className="h-4.5 w-4.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5 font-bold text-zinc-950">
+                    <div className="flex flex-wrap items-center gap-2 font-bold text-[#171717]">
                       <span>Hari Ini: {todayHolidayInfo.name}</span>
-                      <span className="glass-pill rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-700">
-                        {todayHolidayInfo.sourceLabel}
+                      <span className="rounded bg-white border border-[#E5E7EB] px-2 py-0.5 text-[10px] font-semibold text-[#737373]">
+                        {todayHolidayInfo.sourceLabel || 'Libur Resmi'}
                       </span>
                     </div>
-                    <p className="text-[11px] sm:text-xs text-zinc-500 truncate mt-0.5">
+                    <p className="text-xs text-[#737373] truncate mt-0.5">
                       {todayHolidayInfo.description}
                     </p>
                   </div>
@@ -315,7 +275,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('form')}
-                    className="hidden sm:inline-flex items-center glass-pill rounded-full px-3.5 py-1.5 text-xs font-semibold text-zinc-800 hover:text-zinc-950 shrink-0 transition cursor-pointer"
+                    className="hidden sm:inline-flex items-center rounded-lg bg-white hover:bg-[#F0F1F3] border border-[#E5E7EB] px-3 py-1.5 text-xs font-medium text-[#171717] shrink-0 transition cursor-pointer"
                   >
                     Tambah Laporan &rarr;
                   </button>
@@ -323,12 +283,15 @@ export default function Home() {
               </div>
             )}
 
-            {/* ---- Tab Contents ---- */}
-            <div key={activeTab} className="animate-tab-fade">
-
-              {/* TAB: Form Laporan */}
+            {/* ============================================================
+                DYNAMIC TAB CONTENTS
+                ============================================================ */}
+            <div>
+              {/* --------------------------------------------------------
+                  TAB 1: FORM LAPORAN & KETENTUAN KEMNAKER
+                  -------------------------------------------------------- */}
               {activeTab === 'form' && (
-                <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                   <div className="lg:col-span-2">
                     <ReportForm
                       token={token}
@@ -337,69 +300,73 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="space-y-4 sm:space-y-5">
-                    {/* Tips card */}
-                    <div className="glass-card p-4 sm:p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div
-                          className="flex h-7 w-7 items-center justify-center rounded-lg shrink-0"
-                          style={{
-                            background: 'rgba(9,9,11,0.90)',
-                            border: '1px solid rgba(255,255,255,0.14)',
-                            boxShadow: '0 3px 8px rgba(0,0,0,0.20)',
-                          }}
-                        >
-                          <Sparkles className="h-3.5 w-3.5 text-white" />
-                        </div>
-                        <h3 className="text-xs font-bold text-zinc-950 uppercase tracking-widest">
-                          Ketentuan Laporan
+                  {/* Sidebar Info */}
+                  <div className="space-y-6">
+                    {/* Ketentuan Laporan Card */}
+                    <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 sm:p-6 space-y-4 shadow-xs">
+                      <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
+                        <h3 className="text-xs font-bold text-[#171717] uppercase tracking-wider">
+                          Ketentuan Laporan Magang
                         </h3>
                       </div>
-                      <ul className="space-y-2.5 text-xs text-zinc-600 leading-relaxed">
+
+                      <ul className="space-y-3.5 text-xs leading-relaxed text-[#737373]">
                         {[
-                          'Minimal 100 karakter pada setiap uraian laporan.',
-                          'Presensi hanya berlaku untuk hari kerja aktif.',
-                          'Periksa status review mentor secara berkala.',
-                        ].map((tip, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <span
-                              className="mt-0.5 h-4 w-4 flex items-center justify-center rounded-full shrink-0 text-[9px] font-black text-white"
-                              style={{ background: 'rgba(9,9,11,0.80)' }}
-                            >
-                              {i + 1}
+                          {
+                            title: 'Batas Minimal Karakter',
+                            desc: 'Setiap poin (Aktivitas, Pembelajaran, Kendala) wajib berisi minimal 100 karakter.',
+                          },
+                          {
+                            title: 'Presensi Hari Kerja Aktif',
+                            desc: 'Presensi hanya berlaku pada hari kerja dan posisi magang yang aktif.',
+                          },
+                          {
+                            title: 'Pemeriksaan Evaluasi Mentor',
+                            desc: 'Periksa status review secara berkala. Jika ada permintaan revisi, perbaiki segera.',
+                          },
+                        ].map((item, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5">
+                            <span className="mt-0.5 h-4.5 w-4.5 flex items-center justify-center rounded-full bg-[#F8F9FA] border border-[#E5E7EB] text-[10px] font-bold text-[#171717] shrink-0">
+                              {idx + 1}
                             </span>
-                            <span>{tip}</span>
+                            <div>
+                              <strong className="block text-[#171717] font-semibold">{item.title}</strong>
+                              <span className="text-[#737373] text-[11px]">{item.desc}</span>
+                            </div>
                           </li>
                         ))}
                       </ul>
                     </div>
 
-                    {/* Riwayat CTA card */}
-                    <div className="glass-card p-4 sm:p-5">
-                      <h3 className="text-xs font-bold text-zinc-950 uppercase tracking-widest mb-1.5">
-                        Riwayat Laporan
+                    {/* Riwayat Laporan CTA Card */}
+                    <div className="bg-[#F8F9FA] border border-[#E5E7EB] rounded-xl p-5 space-y-3">
+                      <h3 className="text-xs font-bold text-[#171717] uppercase tracking-wider">
+                        Riwayat &amp; Evaluasi Mentor
                       </h3>
-                      <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
-                        Pantau status persetujuan mentor dan catatan perbaikan laporan Anda.
+                      <p className="text-xs text-[#737373] leading-relaxed">
+                        Pantau riwayat presensi yang telah disetujui, catatan perbaikan revisi dari mentor, dan rekapitulasi kehadiran Anda.
                       </p>
                       <button
                         onClick={() => setActiveTab('history')}
-                        className="relative w-full overflow-hidden rounded-2xl glass-dark glass-shimmer py-3 text-xs font-bold text-white transition text-center cursor-pointer"
-                        style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.18)' }}
+                        className="w-full flex items-center justify-center rounded-lg bg-[#171717] hover:bg-black text-white py-2.5 text-xs font-semibold transition cursor-pointer"
                       >
-                        Buka Riwayat &rarr;
+                        Buka Riwayat Presensi &rarr;
                       </button>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* TAB: Riwayat */}
+              {/* --------------------------------------------------------
+                  TAB 2: RIWAYAT & MODAL EVALUASI
+                  -------------------------------------------------------- */}
               {activeTab === 'history' && (
                 <AttendanceHistory token={token} key={refreshTrigger} />
               )}
 
-              {/* TAB: Profil */}
+              {/* --------------------------------------------------------
+                  TAB 3: PROFIL PESERTA & PROGRES MAGANG
+                  -------------------------------------------------------- */}
               {activeTab === 'profile' && (
                 <ProfileTab
                   user={user}
@@ -409,78 +376,99 @@ export default function Home() {
                 />
               )}
 
-              {/* TAB: Token */}
+              {/* --------------------------------------------------------
+                  TAB 4: TOKEN & KEAMANAN SESI (SECURITY VAULT)
+                  -------------------------------------------------------- */}
               {activeTab === 'token' && (
-                <div className="mx-auto max-w-2xl animate-liquid-in">
-                  <div className="glass-card p-5 sm:p-8 space-y-5 sm:space-y-6">
+                <div className="mx-auto max-w-2xl">
+                  <div className="bg-white border border-[#E5E7EB] rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
 
-                    {/* Header */}
-                    <div className="flex items-center gap-3 border-b border-zinc-200/60 pb-5">
-                      <div
-                        className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
-                        style={{
-                          background: 'rgba(9,9,11,0.90)',
-                          border: '1px solid rgba(255,255,255,0.14)',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                        }}
-                      >
-                        <Key className="h-4.5 w-4.5 text-white" />
+                    {/* Vault Header */}
+                    <div className="flex items-center gap-3 border-b border-[#E5E7EB] pb-5">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#F8F9FA] border border-[#E5E7EB] shrink-0 text-[#171717]">
+                        <Key className="h-5 w-5" />
                       </div>
                       <div>
-                        <h2 className="text-base sm:text-lg font-bold text-zinc-950 leading-tight">Sesi &amp; Token</h2>
-                        <p className="text-xs text-zinc-500 mt-0.5">Status autentikasi JWT MagangHub</p>
+                        <h2 className="text-base sm:text-lg font-bold text-[#171717]">
+                          Keamanan Sesi &amp; Token
+                        </h2>
+                        <p className="text-xs text-[#737373] mt-0.5">
+                          Status autentikasi JWT resmi MagangHub Kemnaker
+                        </p>
                       </div>
                     </div>
 
-                    {/* Info table */}
-                    <div className="rounded-2xl glass-pill p-4 space-y-2.5 text-xs">
+                    {/* Sesi Status Table */}
+                    <div className="rounded-lg bg-[#F8F9FA] border border-[#E5E7EB] p-4 space-y-2.5 text-xs">
                       {[
-                        { label: 'Masa Berlaku', value: tokenExpiry || 'Tidak diketahui' },
-                        { label: 'Status Sesi', value: 'Aktif (Auto-Refresh)' },
-                        { label: 'Server', value: 'monev-api.maganghub.kemnaker.go.id' },
+                        { label: 'Status Sesi', value: 'Aktif (Auto-Refresh Background)' },
+                        { label: 'Masa Berlaku Token', value: tokenExpiry || 'Tidak Diketahui' },
+                        { label: 'Server Endpoint', value: 'monev-api.maganghub.kemnaker.go.id' },
+                        { label: 'Penyimpanan Kredensial', value: 'LocalStorage Browser (Client-Only)' },
                       ].map(({ label, value }) => (
-                        <div key={label} className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-zinc-200/50 last:border-0 gap-0.5 sm:gap-0">
-                          <span className="text-zinc-500">{label}:</span>
-                          <span className="font-semibold text-zinc-800 font-mono text-right">{value}</span>
+                        <div
+                          key={label}
+                          className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-[#E5E7EB] last:border-0 gap-0.5 sm:gap-0"
+                        >
+                          <span className="text-[#737373] font-medium">{label}:</span>
+                          <span className="font-semibold text-[#171717] font-mono text-left sm:text-right">{value}</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* JWT display */}
+                    {/* JWT Raw Textarea with 1-Click Copy */}
                     <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-widest text-zinc-500 mb-1.5">
-                        Token Aktif (JWT):
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-xs font-semibold text-[#171717]">
+                          Token JWT Aktif:
+                        </label>
+                        <button
+                          type="button"
+                          onClick={copyJwt}
+                          className="flex items-center gap-1 text-xs font-medium text-[#737373] hover:text-[#171717] cursor-pointer"
+                        >
+                          {copiedToken ? (
+                            <>
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                              <span className="text-emerald-700">Tersalin ke Clipboard</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3.5 w-3.5" />
+                              <span>Salin Token</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                       <textarea
                         rows={4}
                         readOnly
                         value={token}
-                        className="w-full rounded-2xl glass-input p-3.5 font-mono text-xs text-zinc-600 focus:outline-none resize-none"
+                        className="w-full rounded-lg bg-white border border-[#E5E7EB] p-3 font-mono text-xs text-[#737373] focus:outline-none resize-none leading-relaxed"
                       />
                     </div>
 
-                    {/* Actions */}
+                    {/* Actions Row */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
                       <button
                         onClick={handleRefreshToken}
                         disabled={isRefreshing}
-                        className="relative flex items-center justify-center gap-2 overflow-hidden rounded-2xl glass-dark glass-shimmer px-5 py-3 text-xs font-bold text-white disabled:opacity-50 transition w-full sm:w-auto cursor-pointer"
-                        style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.20)' }}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-[#171717] hover:bg-black text-white px-5 py-2.5 text-xs font-semibold disabled:opacity-50 transition w-full sm:w-auto cursor-pointer"
                       >
                         {isRefreshing ? (
-                          <div className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                          <div className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                         ) : (
-                          <RefreshCw className="h-4 w-4" />
+                          <RefreshCw className="h-3.5 w-3.5" />
                         )}
                         <span>{isRefreshing ? 'Memperbarui...' : 'Perpanjang Masa Aktif Token'}</span>
                       </button>
 
                       <button
                         onClick={handleLogout}
-                        className="flex items-center justify-center gap-1.5 rounded-2xl glass-pill px-5 py-3 text-xs font-bold text-zinc-700 hover:text-red-600 transition w-full sm:w-auto text-center cursor-pointer"
+                        className="flex items-center justify-center gap-2 rounded-lg bg-white hover:bg-red-50 border border-[#E5E7EB] hover:border-red-200 px-5 py-2.5 text-xs font-medium text-[#737373] hover:text-red-600 transition w-full sm:w-auto cursor-pointer"
                       >
-                        <LogOut className="h-4 w-4" />
-                        <span>Hapus Token &amp; Keluar</span>
+                        <LogOut className="h-3.5 w-3.5" />
+                        <span>Hapus Sesi &amp; Keluar</span>
                       </button>
                     </div>
                   </div>
@@ -491,7 +479,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* ---- Bottom Nav (Mobile) ---- */}
+      {/* ---- Mobile Floating Bottom Navigation ---- */}
       {token && (
         <BottomNav activeTab={activeTab} onSelectTab={setActiveTab} />
       )}
