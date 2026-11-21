@@ -52,7 +52,7 @@ export default function Navbar({
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs sm:text-sm font-bold tracking-tight text-zinc-950 whitespace-nowrap">
-                Monev MagangHub
+                Monev MagangHub Assistant Agent
               </span>
               <span className="hidden md:inline-flex rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-700 border border-zinc-200 shrink-0">
                 Kemnaker
@@ -153,7 +153,7 @@ export default function Navbar({
               <Shield className="h-3.5 w-3.5" />
             </div>
             <span className="text-xs font-bold tracking-tight text-zinc-950 truncate">
-              Monev MagangHub
+              Monev MagangHub Assistant Agent
             </span>
           </div>
 
