@@ -47,7 +47,7 @@ export default function LoginCard({ onLoginWithToken, isLoading }: LoginCardProp
               <KeyRound className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h1 className="text-sm sm:text-lg font-bold tracking-tight">Masuk Monev MagangHub</h1>
+              <h1 className="text-sm sm:text-lg font-bold tracking-tight">Masuk Monev MagangHub Assistant Agent</h1>
               <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5">
                 Gunakan token sesi akun Kemnaker Anda
               </p>
